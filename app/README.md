@@ -92,6 +92,8 @@ All documentation is in the workspace root **`docs/app/`**:
 - **[Quick reference](../docs/app/REFERENCE.md)** – URLs, tables, statuses
 - **[Architecture](../docs/app/ARCHITECTURE.md)** · **[API](../docs/app/API_GUIDE.md)** · **[Database](../docs/app/DATABASE.md)** · **[Deployment](../docs/app/DEPLOYMENT.md)** · **[Developer guide](../docs/app/DEVELOPER_GUIDE.md)**
 
+**Agents / SDK / MCP:** Python SDK ([sdk/](../sdk/)), SMCP plugin ([smcp_plugin/marketplace/](../smcp_plugin/marketplace/)), and how to run Sanctum SMCP for any MCP client: **[docs/AGENTS-SDK-SMCP.md](../docs/AGENTS-SDK-SMCP.md)**.
+
 ## Security
 
 **Critical**: PHP and Python load different subsets of `.env` to prevent secret exposure:

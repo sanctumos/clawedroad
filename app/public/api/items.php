@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo json_encode(['error' => 'name and store_uuid required']);
         exit;
     }
-    $uuid = $userRepo->generateUuid();
+    $uuid = User::generateUuid();
     $now = date('Y-m-d H:i:s');
     $pdo->prepare('INSERT INTO items (uuid, name, description, store_uuid, created_at) VALUES (?, ?, ?, ?, ?)')->execute([$uuid, $name, $description, $storeUuid, $now]);
     echo json_encode(['ok' => true, 'uuid' => $uuid]);

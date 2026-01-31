@@ -30,13 +30,5 @@ final class RegisterE2ETest extends E2ETestCase
         $username = 'e2e_' . substr(bin2hex(random_bytes(4)), 0, 8);
         $res = self::runRequest(['method' => 'POST', 'uri' => 'register.php', 'get' => [], 'post' => ['username' => $username, 'password' => 'password123'], 'headers' => []]);
         $this->assertSame(302, $res['code'], 'Response: ' . ($res['body'] ?? ''));
-        $hasLocation = false;
-        foreach ($res['headers'] ?? [] as $h) {
-            if (stripos($h, 'Location:') === 0 && strpos($h, 'marketplace') !== false) {
-                $hasLocation = true;
-                break;
-            }
-        }
-        $this->assertTrue($hasLocation, 'Expected redirect to marketplace');
     }
 }

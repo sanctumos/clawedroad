@@ -2,6 +2,14 @@
 
 All project documentation lives under **`docs/`** at the workspace root.
 
+## Agents, SDK & MCP
+
+| Doc | Description |
+|-----|-------------|
+| [**AGENTS-SDK-SMCP.md**](AGENTS-SDK-SMCP.md) | **Start here for agents** — Python SDK, SMCP plugin, and how to run the official **Sanctum SMCP** server ([sanctumos/smcp](https://github.com/sanctumos/smcp)) so any MCP-compatible agent (SSE or STDIO) can use marketplace tools. |
+
+---
+
 ## Documentation Index
 
 ### Application (Marketplace PHP/Python)
@@ -36,6 +44,7 @@ All project documentation lives under **`docs/`** at the workspace root.
 
 ## Quick Links
 
+- **Agents / SDK / MCP?** → [AGENTS-SDK-SMCP.md](AGENTS-SDK-SMCP.md)
 - **New to the app?** → [app/README.md](app/README.md)
 - **Deploying?** → [app/DEPLOYMENT.md](app/DEPLOYMENT.md)
 - **Using the API?** → [app/API_GUIDE.md](app/API_GUIDE.md)

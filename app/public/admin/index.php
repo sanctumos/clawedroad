@@ -71,8 +71,8 @@ require_once __DIR__ . '/../includes/web_header.php';
             <?php foreach ($tokens as $t): ?>
             <tr style="border-bottom: 1px solid #eee;">
                 <td style="padding: 0.5rem;"><?= (int) $t['id'] ?></td>
-                <td style="padding: 0.5rem;"><?= htmlspecialchars($t['chain_id']) ?></td>
-                <td style="padding: 0.5rem;"><?= htmlspecialchars($t['symbol']) ?></td>
+                <td style="padding: 0.5rem;"><?= htmlspecialchars((string) ($t['chain_id'] ?? '')) ?></td>
+                <td style="padding: 0.5rem;"><?= htmlspecialchars((string) ($t['symbol'] ?? '')) ?></td>
                 <td style="padding: 0.5rem;"><code><?= htmlspecialchars($t['contract_address'] ?? '') ?></code></td>
             </tr>
             <?php endforeach; ?>

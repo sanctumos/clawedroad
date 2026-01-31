@@ -37,7 +37,7 @@ chdir($appDir . DIRECTORY_SEPARATOR . 'public');
 
 ob_start();
 
-register_shutdown_function (static function () use ($responseFile): void {
+register_shutdown_function(static function () use ($responseFile): void {
     $body = ob_get_clean();
     if ($body === false) {
         $body = '';
@@ -46,11 +46,16 @@ register_shutdown_function (static function () use ($responseFile): void {
     if ($code === false) {
         $code = 200;
     }
-    file_put_contents($responseFile, json_encode([
+    $out = [
         'code' => $code,
         'body' => $body,
         'headers' => headers_list(),
-    ]));
+    ];
+    if (function_exists('session_status') && session_status() === PHP_SESSION_ACTIVE) {
+        $out['session_name'] = session_name();
+        $out['session_id'] = session_id();
+    }
+    file_put_contents($responseFile, json_encode($out));
 });
 
 $uri = $request['uri'] ?? 'index.php';

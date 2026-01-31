@@ -32,6 +32,12 @@ This is a cryptocurrency-based marketplace application built on a LEMP (Linux, N
 - **Dispute resolution** system
 - **Referral payments** and multi-tier commission structure
 
+### Integrating with agents (SDK & MCP)
+
+- **Python SDK** ([sdk/](../../sdk/)) — Call the REST API from Python (API key or session). See [sdk/README.md](../../sdk/README.md).
+- **SMCP plugin** ([smcp_plugin/marketplace/](../../smcp_plugin/marketplace/)) — Expose marketplace as MCP tools for any MCP-compatible agent.
+- **Intro & SMCP server** — [docs/AGENTS-SDK-SMCP.md](../AGENTS-SDK-SMCP.md) explains how to run the official **Sanctum SMCP** server ([sanctumos/smcp](https://github.com/sanctumos/smcp)) with SSE or STDIO so agents can use the marketplace tools.
+
 ### Key Features
 
 - **LEMP Design Philosophy**: URL path = file path. One PHP script per endpoint. No front controller for API/admin routes.

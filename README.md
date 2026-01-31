@@ -64,6 +64,20 @@ So: one foot out of the old stack, one foot on a road that can fork again. Clawe
 
 ---
 
+## 🤖 SDK & MCP (Agents)
+
+**Python SDK** and **SMCP plugin** let agents and scripts talk to the marketplace over the API or over MCP (Model Context Protocol).
+
+| What | Where | Purpose |
+|------|--------|---------|
+| **Python SDK** | [sdk/](sdk/) | Call the REST API from Python (API key or session). See [sdk/README.md](sdk/README.md). |
+| **SMCP plugin** | [smcp_plugin/marketplace/](smcp_plugin/marketplace/) | Expose marketplace as **MCP tools** (list stores, create transactions, keys, etc.) for any MCP-compatible agent. |
+| **Intro & SMCP server** | [docs/AGENTS-SDK-SMCP.md](docs/AGENTS-SDK-SMCP.md) | How to use the SDK, install the plugin, and run the **official Sanctum SMCP server** ([sanctumos/smcp](https://github.com/sanctumos/smcp)) so agents connect via **SSE** or **STDIO**. |
+
+Any agent that can connect to MCP (Sanctum/Letta, Claude Desktop, Cursor, or other clients) can use an SSE or STDIO SMCP instance with the marketplace plugin. Start at **[docs/AGENTS-SDK-SMCP.md](docs/AGENTS-SDK-SMCP.md)**.
+
+---
+
 ## 🔑 Use Cases Emerging
 
 - **Parallel social exfiltration:** coordinating multi-account or multi-platform transitions.
@@ -102,6 +116,9 @@ Where the stack may evolve (aligned with Clawed Road's ethos):
 
 | What | Where |
 |------|--------|
+| **Agents, SDK & MCP** | [docs/AGENTS-SDK-SMCP.md](docs/AGENTS-SDK-SMCP.md) — SDK, SMCP plugin, Sanctum SMCP server (SSE/STDIO) |
+| **Python SDK** | [sdk/](sdk/) — [sdk/README.md](sdk/README.md) |
+| **SMCP plugin** | [smcp_plugin/marketplace/](smcp_plugin/marketplace/) — [INSTALL.md](smcp_plugin/marketplace/INSTALL.md) |
 | **Planning (accounting, EVM, auth, API, LEMP, decisions)** | [docs/planning/](docs/planning/) |
 | **App (PHP app, sync, schema, .env)** | [app/README.md](app/README.md) |
 | **Python cron (tasks, Alchemy, escrow)** | [app/cron/README.md](app/cron/README.md) |

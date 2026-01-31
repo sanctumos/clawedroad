@@ -43,7 +43,7 @@ abstract class E2ETestCase extends TestCase
         return $cookies;
     }
 
-    /** POST login.php with credentials; returns cookies array for use in runRequest(['cookies' => ...]). Asserts 302. */
+    /** POST login.php with credentials; returns cookies array for use in runRequest(['cookies' => ...]). Returns [] if login did not redirect (302). */
     protected static function loginAs(string $username, string $password): array
     {
         $res = self::runRequest([
@@ -56,6 +56,13 @@ abstract class E2ETestCase extends TestCase
         if ($res['code'] !== 302) {
             return [];
         }
-        return self::parseCookiesFromResponse($res);
+        $cookies = self::parseCookiesFromResponse($res);
+        if ($cookies !== []) {
+            return $cookies;
+        }
+        if (isset($res['session_name'], $res['session_id']) && $res['session_name'] !== '' && $res['session_id'] !== '') {
+            return [$res['session_name'] => $res['session_id']];
+        }
+        return [];
     }
 }
