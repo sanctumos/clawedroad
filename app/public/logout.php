@@ -17,5 +17,5 @@ Db::init($baseDir);
 $session = new Session($baseDir);
 $session->destroy();
 
-header('Content-Type: text/plain; charset=utf-8');
-echo 'Logged out';
+header('Location: /marketplace.php', true, 302);
+exit;
