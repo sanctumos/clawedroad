@@ -1,7 +1,8 @@
 # Marketplace PHP App
 
-Plain PHP on LEMP. Document root must point at **`app/public`** (this directory's sibling).
+**Sync:** Only **public/** and **db/** are synced to LEMP. No scripts/, no src/, no data/.
 
-- **Entry point**: `public/index.php`
-- **Nginx**: Set `root` to the full path to `app/public`; PHP-FPM for `.php`. See `app/nginx.conf.example`.
-- **.env**: Repo root `.env` (from `.env.example`). PHP loads only DB_*, SITE_*, session/cookie/CSRF salts.
+- **Document root**: Point Nginx at **public/** (the synced PUBLIC folder).
+- **DB (SQLite)**: **db/** folder at the same level as **public/**; file `db/store.sqlite`. `.env` uses `DB_DSN=sqlite:db/store.sqlite` (path relative to baseDir = parent of public/).
+- **Schema**: **public/schema.php** — run via HTTP (GET/POST) or CLI: `php schema.php` from the public/ directory (with baseDir = parent of public). Creates tables, views, seeds config.
+- **.env**: In the **app/** folder (same level as public/ and db/). Copy from `app/.env.example` to `app/.env`. PHP loads only DB_*, SITE_*, session/cookie/CSRF salts.

@@ -7,6 +7,7 @@ Cron entrypoint. Run on schedule (e.g. every 1-5 min).
 import sys
 from pathlib import Path
 
+# baseDir = app/ (parent of cron/); .env and db/ are in app/
 BASE_DIR = str(Path(__file__).resolve().parent.parent)
 
 def main():

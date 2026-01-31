@@ -1,5 +1,9 @@
 # Temporary clones for analysis (do not commit)
 tmp/
 
-# Environment (secrets)
+# Environment (secrets) — .env lives in app/ folder
+app/.env
 .env
+
+# SQLite DB file (db/ same level as public/)
+db/*.sqlite

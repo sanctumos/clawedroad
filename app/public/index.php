@@ -3,16 +3,16 @@
 declare(strict_types=1);
 
 /**
- * Web entry point. Document root = app/public.
+ * Web entry point. Document root = public/ (only public/ and db/ sync to LEMP).
  */
-$baseDir = dirname(__DIR__, 2);
-$sep = DIRECTORY_SEPARATOR;
-require $baseDir . $sep . 'app' . $sep . 'src' . $sep . 'Env.php';
-require $baseDir . $sep . 'app' . $sep . 'src' . $sep . 'Db.php';
-require $baseDir . $sep . 'app' . $sep . 'src' . $sep . 'Session.php';
-require $baseDir . $sep . 'app' . $sep . 'src' . $sep . 'User.php';
-require $baseDir . $sep . 'app' . $sep . 'src' . $sep . 'Router.php';
-require $baseDir . $sep . 'app' . $sep . 'src' . $sep . 'ApiKey.php';
+$baseDir = dirname(__DIR__);
+$inc = __DIR__ . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR;
+require $inc . 'Env.php';
+require $inc . 'Db.php';
+require $inc . 'Session.php';
+require $inc . 'User.php';
+require $inc . 'Router.php';
+require $inc . 'ApiKey.php';
 
 Env::load($baseDir);
 Db::init($baseDir);
@@ -193,7 +193,7 @@ $router->post('/api/keys/revoke', function () use ($session, $apiKeyRepo) {
     }
 });
 
-require $baseDir . $sep . 'app' . $sep . 'src' . $sep . 'Config.php';
+require $inc . 'Config.php';
 $config = new Config($pdo);
 
 $router->get('/admin/config', function () use ($session, $config) {
@@ -286,7 +286,7 @@ $router->post('/admin/tokens/remove', function () use ($session, $pdo) {
     echo json_encode(['ok' => true]);
 });
 
-require $baseDir . $sep . 'app' . $sep . 'src' . $sep . 'StatusMachine.php';
+require $inc . 'StatusMachine.php';
 $statusMachine = new StatusMachine($pdo);
 
 $router->get('/api/stores', function () use ($pdo) {
