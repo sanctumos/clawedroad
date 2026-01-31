@@ -165,8 +165,9 @@ This is a cryptocurrency-based marketplace application built on a LEMP (Linux, N
 app/
 ├── .env.example              # Environment template
 ├── nginx.conf.example        # Nginx configuration example
-├── README.md                 # Quick reference
-├── DOCUMENTATION.md          # This file
+├── README.md                 # Points to docs/app/
+│
+│  (All docs: docs/app/ at workspace root)
 │
 ├── cron/                     # Python blockchain automation
 │   ├── cron.py              # Main cron entrypoint
@@ -1419,10 +1420,11 @@ EXIT;
 
 ### Related Documentation
 
-- [Cron README](cron/README.md) - Python cron detailed documentation
-- [Main README](README.md) - Quick reference guide
-- [Nginx Example Config](nginx.conf.example) - Server configuration
-- [Environment Template](.env.example) - Configuration reference
+- [INDEX.md](INDEX.md) - Full documentation index
+- [REFERENCE.md](REFERENCE.md) - Quick reference guide
+- [Cron README](../../app/cron/README.md) - Python cron detailed documentation
+- [Nginx Example Config](../../app/nginx.conf.example) - Server configuration
+- [Environment Template](../../app/.env.example) - Configuration reference
 
 ### External References
 

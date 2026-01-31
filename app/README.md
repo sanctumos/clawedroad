@@ -1,6 +1,6 @@
 # Marketplace PHP App (LEMP)
 
-**Quick Reference Guide** - For comprehensive documentation, see [DOCUMENTATION.md](DOCUMENTATION.md)
+**Quick Reference** – Full documentation: **[docs/app/README.md](../docs/app/README.md)**
 
 ## Overview
 
@@ -85,14 +85,12 @@ Cryptocurrency-based marketplace application built on LEMP stack with Python cro
 
 ## Documentation
 
-📚 **[Complete Documentation](DOCUMENTATION.md)** - Start here for comprehensive guide
+All documentation is in the workspace root **`docs/app/`**:
 
-Additional documentation in `docs/`:
-- **[Architecture](docs/ARCHITECTURE.md)** - System architecture and design patterns
-- **[API Guide](docs/API_GUIDE.md)** - Complete API reference with examples
-- **[Database Schema](docs/DATABASE.md)** - Database tables, views, and queries
-- **[Deployment Guide](docs/DEPLOYMENT.md)** - Production deployment instructions
-- **[Documentation Index](docs/README.md)** - Quick reference and navigation
+- **[Main docs](../docs/app/README.md)** – overview, quick start, API, schema, deployment
+- **[Index](../docs/app/INDEX.md)** – full doc index
+- **[Quick reference](../docs/app/REFERENCE.md)** – URLs, tables, statuses
+- **[Architecture](../docs/app/ARCHITECTURE.md)** · **[API](../docs/app/API_GUIDE.md)** · **[Database](../docs/app/DATABASE.md)** · **[Deployment](../docs/app/DEPLOYMENT.md)** · **[Developer guide](../docs/app/DEVELOPER_GUIDE.md)**
 
 ## Security
 
@@ -104,7 +102,7 @@ Additional documentation in `docs/`:
 ## Support
 
 For issues and questions:
-1. Check [DOCUMENTATION.md](DOCUMENTATION.md) troubleshooting section
-2. Review [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for production issues
+1. Check [docs/app/README.md](../docs/app/README.md) troubleshooting section
+2. Review [docs/app/DEPLOYMENT.md](../docs/app/DEPLOYMENT.md) for production issues
 3. Check log files for error messages
-4. Consult relevant documentation in `docs/`
+4. See [docs/app/](../docs/app/) for all documentation

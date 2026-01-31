@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 
 #### Main Documentation
-- **DOCUMENTATION.md** - Comprehensive main documentation covering:
+- **README.md** (docs/app/) - Comprehensive main documentation covering:
   - System overview and features
   - Architecture overview
   - Quick start guide
@@ -21,7 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Deployment checklist
   - Troubleshooting guide
 
-#### Specialized Documentation (docs/)
+#### Specialized Documentation (docs/app/)
 - **ARCHITECTURE.md** - System architecture documentation:
   - High-level architecture diagram
   - Component interaction diagrams
@@ -74,7 +74,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Debugging techniques
   - Common coding patterns
 
-- **README.md** (docs/) - Documentation index and quick reference:
+- **REFERENCE.md** (docs/app/) - Documentation index and quick reference:
   - Quick links to all documentation
   - Key concepts summary
   - Common tasks reference
@@ -85,10 +85,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - User roles
   - Chain IDs
 
-- **CHANGELOG.md** (docs/) - This file
+- **CHANGELOG.md** (docs/app/) - This file
 
 #### Supporting Files
-- **DOCUMENTATION_INDEX.md** - Master documentation index:
+- **INDEX.md** (docs/app/) - Master documentation index:
   - Complete file listing
   - Documentation by topic
   - Documentation by role

@@ -4,7 +4,7 @@ Complete documentation for the Marketplace application.
 
 ## Quick Links
 
-- **[Main Documentation](../DOCUMENTATION.md)** - Comprehensive overview and quick start guide
+- **[Main Documentation](README.md)** - Comprehensive overview and quick start guide
 - **[Architecture](ARCHITECTURE.md)** - System architecture and design patterns
 - **[API Guide](API_GUIDE.md)** - Complete API reference with examples
 - **[Database Schema](DATABASE.md)** - Database tables, views, and queries
@@ -12,7 +12,7 @@ Complete documentation for the Marketplace application.
 
 ## Documentation Structure
 
-### Main Documentation (DOCUMENTATION.md)
+### Main Documentation (README.md)
 
 The primary documentation file covering:
 - System overview and features
@@ -142,7 +142,7 @@ python cron/cron.py
 
 | Component | Location |
 |-----------|----------|
-| Main documentation | `app/DOCUMENTATION.md` |
+| Main documentation | `docs/app/README.md` |
 | Environment config | `app/.env` |
 | Database (SQLite) | `app/db/store.sqlite` |
 | PHP classes | `app/public/includes/` |
@@ -223,7 +223,7 @@ python cron/cron.py
 ### Documentation
 
 1. Read the relevant documentation file above
-2. Check the troubleshooting section in DOCUMENTATION.md
+2. Check the troubleshooting section in [README.md](README.md)
 3. Review the deployment guide for production issues
 
 ### Common Issues
@@ -276,7 +276,7 @@ For issues not covered in documentation:
 
 ### Documentation Files
 
-All documentation files are in `app/docs/` except for the main `DOCUMENTATION.md` which is in `app/`.
+All documentation files are in **`docs/app/`** (workspace root).
 
 ---
 

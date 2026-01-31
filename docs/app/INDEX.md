@@ -6,7 +6,7 @@ Complete index of all documentation for the Marketplace application.
 
 ### Main Documentation
 
-**[DOCUMENTATION.md](DOCUMENTATION.md)** - Primary documentation file
+**[README.md](README.md)** - Primary documentation file
 - System overview and features
 - Architecture overview
 - Quick start guide
@@ -22,9 +22,9 @@ Complete index of all documentation for the Marketplace application.
 
 ---
 
-### Specialized Documentation (docs/)
+### Specialized Documentation
 
-#### [ARCHITECTURE.md](docs/ARCHITECTURE.md)
+#### [ARCHITECTURE.md](ARCHITECTURE.md)
 Deep dive into system architecture:
 - High-level architecture diagram
 - Component interactions
@@ -39,7 +39,7 @@ Deep dive into system architecture:
 
 **Read this to understand how the system works internally.**
 
-#### [API_GUIDE.md](docs/API_GUIDE.md)
+#### [API_GUIDE.md](API_GUIDE.md)
 Complete API reference:
 - Getting started with the API
 - Authentication methods (session and API key)
@@ -51,7 +51,7 @@ Complete API reference:
 
 **Use this for integrating with the API.**
 
-#### [DATABASE.md](docs/DATABASE.md)
+#### [DATABASE.md](DATABASE.md)
 Complete database reference:
 - Entity relationship diagram
 - Table reference (all 23 tables)
@@ -63,7 +63,7 @@ Complete database reference:
 
 **Refer to this when working with the database.**
 
-#### [DEPLOYMENT.md](docs/DEPLOYMENT.md)
+#### [DEPLOYMENT.md](DEPLOYMENT.md)
 Production deployment instructions:
 - Prerequisites (hardware and software)
 - Server setup
@@ -78,7 +78,7 @@ Production deployment instructions:
 
 **Follow this to deploy to production.**
 
-#### [DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md)
+#### [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md)
 Developer contribution guide:
 - Development environment setup
 - Code standards (PHP, Python, SQL)
@@ -91,7 +91,7 @@ Developer contribution guide:
 
 **Use this when contributing code to the project.**
 
-#### [README.md](docs/README.md)
+#### [REFERENCE.md](REFERENCE.md)
 Documentation index and quick reference:
 - Quick links to all documentation
 - Key concepts summary
@@ -112,44 +112,44 @@ Documentation index and quick reference:
 ### By Topic
 
 **Getting Started**:
-1. [DOCUMENTATION.md](DOCUMENTATION.md) - Overview and quick start
-2. [DEPLOYMENT.md](docs/DEPLOYMENT.md) - Production deployment
+1. [README.md](README.md) - Overview and quick start
+2. [DEPLOYMENT.md](DEPLOYMENT.md) - Production deployment
 
 **Understanding the System**:
-1. [ARCHITECTURE.md](docs/ARCHITECTURE.md) - System design
-2. [DATABASE.md](docs/DATABASE.md) - Data model
+1. [ARCHITECTURE.md](ARCHITECTURE.md) - System design
+2. [DATABASE.md](DATABASE.md) - Data model
 
 **Using the API**:
-1. [API_GUIDE.md](docs/API_GUIDE.md) - Complete API reference
+1. [API_GUIDE.md](API_GUIDE.md) - Complete API reference
 
 **Contributing**:
-1. [DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md) - Development guide
+1. [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md) - Development guide
 
 **Quick Reference**:
-1. [docs/README.md](docs/README.md) - Quick reference guide
+1. [REFERENCE.md](REFERENCE.md) - Quick reference guide
 
 ### By Role
 
 **New User**:
-1. Start with [DOCUMENTATION.md](DOCUMENTATION.md)
-2. Review [docs/README.md](docs/README.md) for quick reference
+1. Start with [README.md](README.md)
+2. Review [REFERENCE.md](REFERENCE.md) for quick reference
 
 **Developer**:
-1. Read [DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md)
-2. Study [ARCHITECTURE.md](docs/ARCHITECTURE.md)
-3. Reference [DATABASE.md](docs/DATABASE.md)
+1. Read [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md)
+2. Study [ARCHITECTURE.md](ARCHITECTURE.md)
+3. Reference [DATABASE.md](DATABASE.md)
 
 **API Consumer**:
-1. Read [API_GUIDE.md](docs/API_GUIDE.md)
-2. Reference [docs/README.md](docs/README.md) for quick lookups
+1. Read [API_GUIDE.md](API_GUIDE.md)
+2. Reference [REFERENCE.md](REFERENCE.md) for quick lookups
 
 **System Administrator**:
-1. Follow [DEPLOYMENT.md](docs/DEPLOYMENT.md)
-2. Reference [DOCUMENTATION.md](DOCUMENTATION.md) for troubleshooting
+1. Follow [DEPLOYMENT.md](DEPLOYMENT.md)
+2. Reference [README.md](README.md) for troubleshooting
 
 **Database Administrator**:
-1. Study [DATABASE.md](docs/DATABASE.md)
-2. Reference [ARCHITECTURE.md](docs/ARCHITECTURE.md) for design decisions
+1. Study [DATABASE.md](DATABASE.md)
+2. Reference [ARCHITECTURE.md](ARCHITECTURE.md) for design decisions
 
 ---
 
@@ -170,68 +170,35 @@ Documentation index and quick reference:
 ### Common Questions
 
 **"How do I install the application?"**
-→ [DOCUMENTATION.md](DOCUMENTATION.md#quick-start) or [DEPLOYMENT.md](docs/DEPLOYMENT.md)
+→ [README.md](README.md#quick-start) or [DEPLOYMENT.md](DEPLOYMENT.md)
 
 **"How does the transaction system work?"**
-→ [ARCHITECTURE.md](docs/ARCHITECTURE.md#transaction-creation-flow)
+→ [ARCHITECTURE.md](ARCHITECTURE.md#transaction-creation-flow)
 
 **"What API endpoints are available?"**
-→ [API_GUIDE.md](docs/API_GUIDE.md#endpoint-reference)
+→ [API_GUIDE.md](API_GUIDE.md#endpoint-reference)
 
 **"What database tables exist?"**
-→ [DATABASE.md](docs/DATABASE.md#table-reference)
+→ [DATABASE.md](DATABASE.md#table-reference)
 
 **"How do I add a new feature?"**
-→ [DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md#adding-new-features)
+→ [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md#adding-new-features)
 
 **"How do I deploy to production?"**
-→ [DEPLOYMENT.md](docs/DEPLOYMENT.md)
+→ [DEPLOYMENT.md](DEPLOYMENT.md)
 
 **"What are the code standards?"**
-→ [DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md#code-standards)
+→ [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md#code-standards)
 
 **"How do I debug an issue?"**
-→ [DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md#debugging)
+→ [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md#debugging)
 
 ### Search Tips
 
 1. **Use your editor's search**: Most editors can search across multiple files
-2. **Use grep**: `grep -r "search term" docs/`
+2. **Use grep**: `grep -r "search term" docs/app/`
 3. **Check the index**: Each document has a table of contents
-4. **Start broad**: Begin with [DOCUMENTATION.md](DOCUMENTATION.md), then drill down
-
----
-
-## 🎯 Documentation Goals
-
-### Completeness ✅
-
-- All features documented
-- All API endpoints documented
-- All database tables documented
-- All configuration options documented
-- All deployment steps documented
-
-### Clarity ✅
-
-- Clear explanations
-- Code examples for all features
-- Diagrams for complex concepts
-- Step-by-step instructions
-
-### Maintainability ✅
-
-- Modular structure (separate files by topic)
-- Version tracking (version and date at bottom of each file)
-- Consistent formatting
-- Easy to update
-
-### Accessibility ✅
-
-- Multiple entry points (main doc, topic-specific docs)
-- Quick reference guide
-- Comprehensive index
-- Cross-references between documents
+4. **Start broad**: Begin with [README.md](README.md), then drill down
 
 ---
 
@@ -260,31 +227,26 @@ Documentation should be reviewed:
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | 2026-01-31 | Initial comprehensive documentation |
+| 1.1 | 2026-01-31 | Consolidated to workspace root docs/app/ |
 
 ---
 
-## 📧 Documentation Feedback
+## 📦 Documentation Location
 
-If you find issues with the documentation:
-1. Check if the information is outdated
-2. Verify with the actual code
-3. Submit corrections or improvements
-4. Update the version and date
+All application documentation is in **`docs/app/`** (workspace root):
 
----
-
-## 📦 Documentation Package
-
-All documentation files are located in:
-- `app/DOCUMENTATION.md` - Main documentation
-- `app/DOCUMENTATION_INDEX.md` - This file
-- `app/README.md` - Quick reference
-- `app/docs/` - Specialized documentation
-
-**Total Size**: ~500 KB (text files)
+- `docs/app/README.md` - Main documentation
+- `docs/app/INDEX.md` - This file
+- `docs/app/REFERENCE.md` - Quick reference
+- `docs/app/ARCHITECTURE.md` - System architecture
+- `docs/app/API_GUIDE.md` - API reference
+- `docs/app/DATABASE.md` - Database schema
+- `docs/app/DEPLOYMENT.md` - Deployment guide
+- `docs/app/DEVELOPER_GUIDE.md` - Developer guide
+- `docs/app/CHANGELOG.md` - Documentation changelog
 
 ---
 
-**Index Version**: 1.0  
+**Index Version**: 1.1  
 **Last Updated**: January 31, 2026  
 **Documentation Maintainer**: Development Team
