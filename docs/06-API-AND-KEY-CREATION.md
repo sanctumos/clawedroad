@@ -37,13 +37,14 @@ Re-implement these endpoints in **PHP** (plain PHP); drop PGP; add **API key** a
 - Optionally enters a **name** (e.g. “Mobile app”, “Script”).
 - **No scope selection in MVP**: key automatically has same permissions as the user (admin / vendor / customer).
 - Server generates a **secret** (e.g. 32 bytes, base64 or hex); shows it **once** (e.g. “Key sk_xxxx…yyyy”).
-- Server stores **key_hash** (e.g. SHA-256 of secret) and **key_prefix** (e.g. first 8 chars) in `api_keys`; never stores full secret again.
-- User (or agent) copies key and uses it in `Authorization: Bearer <secret>` or legacy `?token=<secret>`.
+- Server stores **plain** API key in `api_keys` (MVP; **roadmap**: hashed storage per 08.9). Store key_prefix (e.g. first 8 chars) for display; last_used for audit.
+- User (or agent) copies key and uses it in `Authorization: Bearer <secret>`, `X-API-KEY` header, or legacy `?api_key=<secret>`.
 
 ### 3.2 Key Storage (SQLite MVP / MariaDB prod)
 
-- **api_keys**: id, user_uuid, name, key_hash, key_prefix, created_at, last_used_at, expires_at (optional). **No scopes column in MVP**; permissions = user role.
-- **Validation**: On each API request, take Bearer token or `token` query param; hash it; lookup by key_hash; load user; check expiry; **enforce user role** (admin/vendor/customer) for the endpoint.
+- **api_keys**: id, user_uuid, name, api_key (plain in MVP; roadmap: hashed per 08.9), key_prefix, created_at, last_used_at, expires_at (optional). **No scopes column in MVP**; permissions = user role.
+- **Validation**: On each API request, take Bearer token, `X-API-KEY` header, or `api_key` query param; lookup by api_key; update last_used_at; load user; check expiry; **enforce user role** (admin/vendor/customer) for the endpoint.
+- **Rate limit**: **Per API key**; default **60 requests per minute** (08.9). Roadmap: pay for higher access. Enforce in PHP (e.g. DB-backed or in-memory window).
 
 ### 3.3 Revocation and Rotation
 
@@ -64,5 +65,5 @@ Re-implement these endpoints in **PHP** (plain PHP); drop PGP; add **API key** a
 
 - [ ] Implement all marketplace API endpoints in PHP (from router list above, minus PGP).
 - [ ] Add `api_keys` table and key creation/revocation endpoints (or pages).
-- [ ] Validate API key (hash + prefix) on each API request; load user; enforce **user role** (admin/vendor/customer).
+- [ ] Validate API key (lookup plain key in MVP; roadmap: hashed) on each API request; enforce **rate limit** (per key, 60/min default); load user; enforce **user role** (admin/vendor/customer).
 - [ ] Document API and key lifecycle for users and developers.

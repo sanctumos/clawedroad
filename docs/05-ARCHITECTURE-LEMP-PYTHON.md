@@ -62,7 +62,7 @@
 - **Nginx**: Reverse proxy; PHP-FPM for `.php`; static assets from filesystem.
 - **DB**: **SQLite** (MVP, single file) or **MariaDB** (prod, single instance); schema and views portable.
 - **Python**: **Cron** (e.g. systemd timer or crontab) every 1–10 minutes; reads .env for mnemonic and Alchemy API key; runs, updates DB, exits.
-- **Secrets**: **.env** only (no vault in MVP). **Single-tenant** deployment.
+- **Secrets**: **.env** only (no vault in MVP). **Single-tenant** deployment. **PHP**: Load **only relevant** .env vars (e.g. DB_*, SITE_*, session/cookie); do not load Python-only secrets (mnemonic, Alchemy key) into PHP to avoid exposure (08.9). .env is shared between PHP and Python; each side reads only what it needs.
 - **No Redis** for MVP (PHP sessions = file/DB; no queue).
 
 ## 7. Files to Mirror (Logic Only)

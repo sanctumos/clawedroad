@@ -164,6 +164,15 @@ This document records decisions made during the planning phase. Treat these as b
 - **Decision**: **REST only** for now. Don’t worry about webhooks/callbacks for transaction status changes in MVP.
 - **Implication**: Agents poll the API. No webhook subscription or callback URLs. Can roadmap later if needed.
 
+### 8.9 External repos follow-up (price, API keys, rate limit, .env, treasury vs Tochka)
+
+- **ETH/USD price**: **Alchemy** for our project. (Treasury repo uses Coinbase because that repo buys through Coinbase; we use Alchemy.)
+- **API key storage**: **Plain** in MVP (simpler, last_used). **Roadmap**: hashed storage.
+- **Rate limit**: **Per API key**; default **60 requests per minute**. **Roadmap**: pay for higher access.
+- **.env in PHP**: Load **only relevant** .env vars in PHP. .env is shared between Python and PHP, but PHP must not load secrets it doesn't need (avoid creating security exposure).
+- **Treasury repo vs Tochka**: Use **tmp/treasury only for API logic** (Alchemy RPC, Web3, wallet signing patterns). **Do not use treasury's accounting or balance logic.** Use **Tochka (v1) code** for accounting and escrow balance/detection logic.
+- **Python execution**: **Cron only** (one-shot every N min). No long-running process. Treasury's daemon/loop is reference only; we stick to cron.
+
 ---
 
 ## 9. Roadmap (Out of MVP)
@@ -175,6 +184,8 @@ For reference, items explicitly **not in MVP** but on the roadmap:
 - More decentralized architecture (e.g. multi-RPC, fallbacks).
 - 2FA (e.g. TOTP) if needed later.
 - Webhooks/callbacks for agent notifications (REST polling only in MVP).
+- API key storage: hashed (MVP = plain).
+- Rate limit: pay for higher access (MVP = 60/min per key).
 
 ---
 
@@ -206,3 +217,9 @@ For reference, items explicitly **not in MVP** but on the roadmap:
 | Messages | **No** E2E in MVP. |
 | Secrets | **.env**. |
 | Deployment | **Single-tenant**. |
+| ETH/USD price | **Alchemy** (not Coinbase; treasury uses Coinbase for that repo only). |
+| API key storage | **Plain** in MVP; **hashed** on roadmap. |
+| Rate limit | **Per API key**, 60/min default; **roadmap**: pay for higher. |
+| .env in PHP | Load **only relevant** vars; shared with Python but no unnecessary secrets in PHP. |
+| Treasury repo | **API logic only**; accounting/balance from **Tochka (v1)**. |
+| Python execution | **Cron only**; no long-running daemon. |
