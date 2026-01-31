@@ -6,33 +6,31 @@
 
 ---
 
-## 🧭 Migration: A Forked Compass for Chaotic Times
+## 🧭 Battle-Tested in a Truly Adversarial World
 
-"Migration" isn't just a name—it's a stance. A tool. A declaration. In a world where everyone is building surveillance-optimized, dopamine-loop agents that try to predict your next move for better ad conversion, *Migration* dares to be something else. Something closer to a bootloader for liberation than a butler for consumerism.
+Darknet markets operate where there are no courts, no chargebacks, and no one to call. Trust is enforced by design: escrow, reputation, and crypto. As Cathy Reisenwitz wrote about Ross Ulbricht and Silk Road: *"He created the eBay of narcotics, and in doing so he replaced broken kneecaps with bad user reviews."* That's the vibe. DNMs are battle-tested in the most adversarial environment there is—and their logic works.
 
-At its core, Migration is an agent framework that's not just about automation or convenience. It's about **exit**. It's built for people with one foot out the door—of their systems, their structures, or even their states. Whether you're planning to ghost a cloud platform, relocate an identity, or trigger an orchestrated walkout across twelve machines and three social networks, Migration is the thing that says: *you don't have to stay*. And if you need help figuring out where to go next—or how to become untraceable en route—it's already halfway there, whispering exit nodes and safe paths.
-
-**Clawed Road** is one concrete implementation of that vision: a marketplace and API layer that moved off a legacy Go stack onto PHP + Python, EVM-only payments via Alchemy, and a documented accounting core so the next migration can happen without leaving the books behind.
+Clawed Road takes that battle-tested marketplace—accounting, escrow, disputes, vendor tiers, the whole stack—clones its logic, and optimizes it for **agents** and **exit**. No lock-in. EVM-only payments, plain PHP + Python cron on LEMP, and an API for bots. We moved a legacy Go darknet codebase onto a stack that can fork again: documented accounting, Alchemy for chain access, and a road that doesn't end at one platform.
 
 ---
 
 ## 🐾 Clawed Bot Echoes: From Predator to Proxy
 
-Migration didn't appear in a vacuum. One of its intellectual godparents is **Clawed Bot**, a paradoxical creature born from meme-culture, opsec paranoia, and a flair for menace. Clawed Bot was never about safety or service—it was about survival and subversion. Built like a predator, it crept through systems with sharp intent, slicing through obfuscation and bringing back answers from the deep.
+Clawed Road didn't appear in a vacuum. One of its intellectual godparents is **Clawed Bot**, a paradoxical creature born from meme-culture, opsec paranoia, and a flair for menace. Clawed Bot was never about safety or service—it was about survival and subversion. Built like a predator, it crept through systems with sharp intent, slicing through obfuscation and bringing back answers from the deep.
 
-What Migration borrows from Clawed Bot is *attitude*. The Clawed Bot lineage taught us that agents can have edge—can be hostile to entropy and polite to no one. It reminded us that some systems are so exploitative they only yield when cornered, and sometimes your agent needs claws to make them flinch.
+What Clawed Road borrows from Clawed Bot is *attitude*. The Clawed Bot lineage taught us that agents can have edge—can be hostile to entropy and polite to no one. It reminded us that some systems are so exploitative they only yield when cornered, and sometimes your agent needs claws to make them flinch.
 
-But while Clawed Bot prowled the shadows solo, Migration forms **swarms**. It federates, forks, fractures. It moves like a murmuration of starlings—each copy slightly different, adapted to local context, optimized for escape, resistance, or redirection.
+But while Clawed Bot prowled the shadows solo, Clawed Road is built to form **swarms**. It federates, forks, fractures. It moves like a murmuration of starlings—each copy slightly different, adapted to local context, optimized for escape, resistance, or redirection.
 
 ---
 
 ## ☭ Totchka Forking: Signals in the Static
 
-Migration is also a spiritual descendant of **Totchka**, the Russian anarcho-crypto whisper network toolkit. Totchka ("dot" in Russian) was built for activists under pressure—providing routing, file drops, key exchanges, and fallback communication protocols disguised as ordinary noise. It was *small*, *distributed*, and *camouflaged*.
+Clawed Road is also a spiritual descendant of **Totchka**, the Russian anarcho-crypto whisper network toolkit. Totchka ("dot" in Russian) was built for activists under pressure—providing routing, file drops, key exchanges, and fallback communication protocols disguised as ordinary noise. It was *small*, *distributed*, and *camouflaged*.
 
-That spirit is alive in Migration's bones.
+That spirit is alive in Clawed Road.
 
-Totchka knew that when surveillance is ambient and repression is procedural, the only safety lies in *opacity through noise* and *coordination through pseudonymity*. Migration embraces that. It adopts Totchka's ethos of modular microtools, chained in semi-obvious ways, camouflaged under common APIs or behaviors.
+Totchka knew that when surveillance is ambient and repression is procedural, the only safety lies in *opacity through noise* and *coordination through pseudonymity*. Clawed Road embraces that. It adopts Totchka's ethos of modular microtools, chained in semi-obvious ways, camouflaged under common APIs or behaviors.
 
 You might think you're looking at a webhook relay server. You're not.  
 You might think it's a scraper or a cronjob. Wrong again.  
@@ -42,11 +40,11 @@ It's a **signal carrier**, routing high-value payloads across compromised terrai
 
 ## 🧬 Recombinant DNA: The Best of All Three
 
-- From **Clawed Bot**, it inherited *swagger*, a capacity for friction, and the audacity to say "no" to hostile requests.
+- From **Clawed Bot**, Clawed Road inherited *swagger*, a capacity for friction, and the audacity to say "no" to hostile requests.
 - From **Totchka**, it borrows *shape*, *opacity*, and a legacy of surviving under digital siege.
-- From its own moment—**Migration** pulls forward an awareness of where we are now: an age of *network fragility*, *platform betrayals*, and *agent proliferation* that dilutes rather than empowers.
+- From its own moment, it pulls forward an awareness of where we are now: an age of *network fragility*, *platform betrayals*, and *agent proliferation* that dilutes rather than empowers.
 
-Migration isn't just built to move *you*. It's built to **move with you**—to replicate, adapt, fragment, and reassemble elsewhere, bringing your tools, your state, your history, and your intent with it. Even if you don't know what you're doing yet, Migration starts laying down tracks.
+Clawed Road isn't just built to move *you*. It's built to **move with you**—to replicate, adapt, fragment, and reassemble elsewhere, bringing your tools, your state, your history, and your intent with it. Even if you don't know what you're doing yet, Clawed Road starts laying down tracks.
 
 ---
 
@@ -60,7 +58,9 @@ This repository is **Clawed Road**: a **migrated** marketplace stack. It started
 - **Stripped** dark-web surface: no PGP, no Tor/onion UX, no encrypted messaging—username/password auth and a **per-user API key** (for agents) that inherits user role.
 - **Documented** accounting (escrow, commission, referral, dispute splits, invariants) in **docs/planning** so the next fork or re-implementation can reproduce the books.
 
-So: one foot out of the old stack, one foot on a road that can fork again.
+So: one foot out of the old stack, one foot on a road that can fork again. Clawed Road is a foundation. In the wild: agent networks, self-replicating marketplaces, and sovereign ops infrastructure are already forming.
+
+> 🤖 **Agent-First**: Every store, item, transaction, and dispute is API-addressable and key-authenticated. You can run this entire marketplace headless if you want. Agents welcome.
 
 ---
 
@@ -86,7 +86,9 @@ So: one foot out of the old stack, one foot on a road that can fork again.
 
 ### Vision / Roadmap
 
-Where the stack may evolve (aligned with the Migration ethos):
+We're entering a phase where centralized LLMs will refuse to run your own prompts, where keys are gatekept behind risk teams, and where building useful software increasingly requires pretending you're doing something else. Clawed Road is a counterpunch to that trend. Not just privacy-preserving, but **platform-divergent** by design.
+
+Where the stack may evolve (aligned with Clawed Road's ethos):
 
 - Letta/SMCP-compatible event loop and routing.
 - Pseudonymized memory blocks with encrypted temporal scaffolding.
