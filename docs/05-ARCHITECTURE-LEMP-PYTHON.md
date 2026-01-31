@@ -5,7 +5,7 @@
 ## 1. Target Stack
 
 - **Website**: **Plain PHP** (no framework) on **LEMP** (Linux, Nginx, PHP). Serves all user-facing pages, forms, and the **public API** (primarily for **agents**). **DB**: **SQLite** for MVP, **MariaDB** for prod. **Sessions**: PHP-owned (file or DB), not Redis. K.I.S.S.
-- **Crypto**: **Python** runs as **cron** (scheduled job; runs, does work, exits). **Internal only** (no public HTTP). Handles EVM: HD-derived escrow addresses, balance checks, sends (release/cancel/partial refund, deposit withdraw). **No “fund from user wallet” in MVP** (08: buyer sends from external wallet only). Uses **Alchemy API** for chain access. No long-running async loop.
+- **Crypto**: **Python** runs as **cron** (scheduled job; runs, does work, exits). **Internal only** (no public HTTP). Handles EVM: HD-derived escrow addresses, balance checks, sends (release/cancel/partial refund, deposit withdraw). **No “fund from user wallet” in MVP** (08: buyer sends from external wallet only). Uses **Alchemy API** for chain access. **Cron only** — no long-running process.
 
 ## 2. Boundaries
 
@@ -18,7 +18,7 @@
 ### 2.2 Python (Cron)
 
 - **Owns**: **Single mnemonic** (in .env); **HD-derived** escrow keys; Alchemy client; signing and sending logic.
-- **Does**: On each cron run: generate escrow addresses (derived); get balances (ETH + token); send ETH/token (release, cancel, partial refund, deposit withdraw). **Does not** send from user-held wallets in MVP (08: buyer funding is external-wallet-only). Writes status and receipts to DB.
+- **Does**: On each **cron run**: generate escrow addresses (derived); get escrow and vendor-deposit balances (ETH + token); send ETH/token (release, cancel, partial refund, deposit withdraw). **Does not** handle in-app buyer wallets or "fund from user wallet" in MVP (08: buyer pays from external wallet only). Writes status and receipts to DB. Exits when done.
 - **Does not**: Expose HTTP to the internet; does not own user/session/auth. Runs on schedule and exits (no long-running process).
 
 ### 2.3 Database (SQLite / MariaDB, .env configurable)
@@ -33,29 +33,29 @@
 - **PHP**: Inserts/updates “intent” rows (e.g. `transaction_release_requests`: transaction_uuid, requested_at, status = pending). Updates transaction status and receipt when done.
 - **Python**: Polls (or listens) for pending intents; performs chain action; writes result (tx hash, success/fail) and updates intent status; PHP (or Python) updates `transaction_statuses` and `payment_receipts`.
 
-### 3.2 Option B: Internal API (PHP → Python)
+### 3.2 Option B: Internal API (PHP → Python) — **Not used in MVP**
 
-- **PHP**: Calls internal HTTP (e.g. `http://127.0.0.1:internal-port/...`) or queue (Redis, RabbitMQ) with “release tx X”, “cancel tx Y”, “get balance of Z”.
-- **Python**: Exposes minimal internal API or consumes queue; performs action; returns result; PHP updates DB.
+- **PHP**: Would call internal HTTP or queue (Redis, RabbitMQ). **We do not use this.** Contract is DB only (08).
+- **Python**: No HTTP server; cron only. Option B is out of scope for MVP.
 
 ### 3.3 Option C: Python Cron Polls DB (Chosen)
 
 - **Python**: **Cron** (not long-running): each run: “find PENDING transactions, poll escrow balance via Alchemy; if funded, mark COMPLETED”; “find COMPLETED older than completed_duration, run release”; “find FAILED/CANCELLED/RELEASED with non-zero amount, reconcile”; etc. Writes status and receipts directly to DB.
 - **PHP**: Can “request” release/cancel (e.g. set “pending_action”); Python cron picks it up. PHP does not sign or send; Python is sole writer of crypto results.
 
-**Decision (08):** Python = **cron**, not long-running process. Option A or C (DB as contract) preferred; Option B (internal API) not required for MVP.
+**Decision (08):** Python = **cron**, not long-running process. **Option C** (DB as contract). Option B (internal API) and Redis/queue are **not** in MVP.
 
-## 4. Cron / Background Tasks
+## 4. Cron (No Async Loop, No User Wallets)
 
-- **Current (Go)**: gocron runs TaskUpdatePendingTransactions, TaskFailOldPendingTransactions, TaskReleaseOldCompletedTransactions, TaskFreezeStuckCompletedTransactions, CancelCompletedAndNotDispatchedTransactions, TaskUpdateBalancesOrRecentlyReleasedAndCancelledTransactions, TaskFinalizeReleasedAndCancelledTransactionsWithNonZeroAmount; plus wallet balance updates, currency rates, SERP, messageboard, stats.
-- **Target**: **Python cron** (scheduled, e.g. every 1–5 min) runs **crypto-related** tasks (update pending, fail old pending, release old completed, freeze stuck, cancel not dispatched, reconcile released/cancelled; update wallet balances). **PHP** cron can run **non-crypto** tasks: currency rates, search index, stats, notifications, etc. No Redis/queue required for MVP (K.I.S.S.).
+- **Current (Go)**: gocron runs transaction tasks (update pending, fail old, release old, freeze, cancel, reconcile) and **escrow/deposit** balance updates; plus currency rates, SERP, messageboard, stats.
+- **Target**: **Python cron** (scheduled, e.g. every 1–5 min) runs **crypto-related** tasks only: update pending, fail old pending, release old completed, freeze stuck, cancel not dispatched, reconcile released/cancelled; **update escrow and vendor-deposit balances** (no in-app buyer wallets in MVP). **PHP** cron can run **non-crypto** tasks: currency rates, search index, stats, notifications. **No Redis, no queue, no async loop** — cron runs, does work, exits.
 
 ## 5. Security
 
 - **Keys**: Only in Python process (or HSM/KMS). Never in PHP or DB in plaintext.
-- **Python**: Listen only on localhost or internal network; not exposed to internet.
+- **Python**: No HTTP server; **cron only**. Not exposed to internet. Does not listen on any port.
 - **DB**: PHP and Python use same DB; use least-privilege DB user for Python (only tables needed for crypto).
-- **API**: Public API on PHP; validate API key or session; PHP then enqueues or writes intent for Python; Python does not accept external HTTP.
+- **API**: Public API on PHP; validate API key or session; PHP **writes intent/state to DB**; Python cron reads DB, performs crypto, writes results. PHP does not call Python; no internal API.
 
 ## 6. Deployment Sketch
 
@@ -67,7 +67,7 @@
 
 ## 7. Files to Mirror (Logic Only)
 
-- **Crypto tasks**: `modules/marketplace/tasks_transaction.go`, `tasks_wallet.go` → Python (update pending, fail old, release old, freeze, reconcile, wallet balances).
+- **Crypto tasks**: `modules/marketplace/tasks_transaction.go`, `tasks_wallet.go` → Python (update pending, fail old, release old, freeze, reconcile; **escrow and vendor-deposit** balances only — no user/buyer wallets in MVP).
 - **Crypto models**: `models_transaction_cc_ethereum.go`, `models_wallet_ethereum.go`, `models_receipt.go` → Python (release/cancel/partial refund logic; receipt creation).
 - **API layer (Payaka)**: `modules/apis/payments_ethereum.go` → Python using Alchemy (balance, send).
 

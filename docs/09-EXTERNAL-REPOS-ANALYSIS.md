@@ -15,12 +15,12 @@ This document summarizes findings from the cloned reference repositories in `tmp
 - **RPC client** (`treasury-core/chains/base/rpc.py`): Uses **Web3.py** with `HTTPProvider`. Methods: `get_balance`, `get_transaction_count`, `send_raw_transaction`, `get_transaction_receipt`, `get_latest_block_number`, `get_block(block_number, full_transactions=True)`, `get_transaction`, `get_transactions_for_address`, `get_incoming_eth_transfer_tx_hashes`. ERC-20 detection uses `Transfer(address,address,uint256)` topic: `ERC20_TRANSFER_TOPIC0 = "0x" + Web3.keccak(text="Transfer(address,address,uint256)").hex()` and `get_logs` with address topics. Sync Web3 calls are wrapped in `loop.run_in_executor()` for async use.
 - **Wallet** (`treasury-core/chains/base/wallet.py`): **eth_account.Account.from_key(private_key)**; `get_address`, `get_balance(rpc)`, `build_transfer(to, amount_eth, rpc, gas_price_gwei?)`, `sign_and_send(raw_tx, rpc)`. Chain ID 8453 (Base Mainnet) hardcoded in tx dict. Gas: `estimate_gas` with 21000 fallback for simple ETH transfer.
 - **Config** (`treasury-core/config.py`): Loads `.env` from treasury-core dir via `dotenv`. Uses single **ALCHEMY_API_KEY** to build RPC URLs: Solana `https://solana-mainnet.g.alchemy.com/v2/{key}`, Base `https://base-mainnet.g.alchemy.com/v2/{key}`. Fallback: `BASE_RPC_URL` if no Alchemy key. Base wallet: `BASE_OPERATIONS_ADDRESS`, `BASE_OPERATIONS_PRIVATE_KEY`. Gas: `base_gas_reserve_eth`, `base_ops_gas_buffer_eth`.
-- **Price feed** (`treasury-core/utils/price_feed.py`): ETH/USD with cache (`eth_usd_price_cache_seconds`). Config has `eth_usd_price_source`: `'alchemy'` or `'coinbase'`. **Alchemy branch**: `_fetch_from_alchemy()` currently **falls back to Coinbase** (comment: "Alchemy doesn't have a direct price endpoint"). Coinbase: `https://api.coinbase.com/v2/exchange-rates?currency=ETH`. Stale cache used on fetch failure; final fallback 3000.0 USD.
+- **Price feed** (`treasury-core/utils/price_feed.py`): That repo uses Coinbase for ETH/USD (they buy through Coinbase). **We use Alchemy Prices API** (see 03): `GET /prices/v1/tokens/by-symbol?symbols=ETH` for ETH/USD; `POST .../tokens/by-address` for ERC-20. Optional fallback: CoinGecko (or similar) if Alchemy pricing is unavailable.
 
 **Migration relevance:**  
 - RPC URL pattern `https://{chain}.g.alchemy.com/v2/{ALCHEMY_API_KEY}` matches our plan (mainnet, Sepolia, Base).  
 - Web3 + eth_account is a proven stack for EVM; Python cron can use the same libs (sync calls per run).  
-- **Price:** We use **Alchemy** for ETH/USD (08.9). Treasury uses Coinbase only because that repo buys through Coinbase.
+- **Price:** We use **Alchemy Prices API** (by-symbol for ETH/USD, by-address for ERC-20); optional CoinGecko fallback (03). Treasury uses Coinbase only because that repo buys through Coinbase.
 
 ### 1.2 Main loop and deployment
 
@@ -105,7 +105,7 @@ This document summarizes findings from the cloned reference repositories in `tmp
 |-----------------|--------------------------------------|----------------------------------------|----------------|
 | EVM RPC         | Web3, Alchemy URL by chain           | —                                      | Python cron uses Web3 + Alchemy URLs per chain |
 | Wallet / sign   | eth_account, private key             | —                                      | Python: HD from mnemonic for escrow; commission wallet from .env |
-| Price           | Coinbase ETH/USD (that repo only)    | —                                      | **We use Alchemy** (08.9). |
+| Price           | Coinbase (that repo only)            | —                                      | **Alchemy Prices API** (by-symbol, by-address); optional CoinGecko (03). |
 | Process model   | Long-running systemd daemon          | —                                      | We use **cron** only (08.9). |
 | DB (Python)     | aiosqlite, WAL, queue tables         | —                                      | Python: shared DB with PHP; cron = reference only. |
 | Auth            | —                                    | Session, bcrypt, requireAuth           | PHP auth pattern; add roles/stores |
@@ -118,7 +118,7 @@ This document summarizes findings from the cloned reference repositories in `tmp
 
 ## 4. Decisions (from 08.9)
 
-- **ETH/USD price**: Alchemy (we use Alchemy; treasury uses Coinbase for that repo only).
+- **ETH/USD price**: Alchemy **Prices API** (by-symbol for ETH, by-address for ERC-20); optional CoinGecko fallback (03). Treasury uses Coinbase for that repo only.
 - **API key storage**: Plain in MVP; hashed on roadmap.
 - **Rate limit**: Per API key, 60/min default; roadmap: pay for higher access.
 - **.env in PHP**: Load only relevant vars; shared with Python but no unnecessary secrets in PHP.

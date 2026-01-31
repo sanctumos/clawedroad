@@ -28,7 +28,7 @@
   - `id` (PK)
   - `user_uuid` (FK to users)
   - `name` (optional label, e.g. “Agent 1”, “Script”)
-  - `key_hash` (hash of the secret key; never store plain key)
+  - `api_key` (plain secret in **MVP**; **roadmap**: store hash only, validate with hash_equals — per 08.9)
   - `key_prefix` (e.g. first 8 chars for “Key xxx…yyy” display)
   - `created_at`, `last_used_at`, `expires_at` (optional)
   - **No fine-grained scopes in MVP**: key **inherits user role** (admin / vendor / customer). Enforce role on each request; no separate `scopes` column needed for MVP.
@@ -37,14 +37,14 @@
 
 - User requests “Create API key” (from account/settings).
 - Server generates a **random secret** (e.g. 32 bytes, base64 or hex), shows it **once** to the user.
-- Store only `key_hash` (e.g. SHA-256) and `key_prefix`; never store the full secret after creation.
-- Client uses the secret in header (e.g. `Authorization: Bearer <secret>`) or query (legacy `?token=`); server validates by hashing and comparing to `key_hash`.
+- **MVP**: Store `api_key` (plain) and `key_prefix`; validate by direct lookup. **Roadmap**: store only hash + prefix; validate with hash_equals.
+- Client uses the secret in header (e.g. `Authorization: Bearer <secret>`, `X-API-KEY`) or query (legacy `?api_key=`); server validates by lookup (MVP) or hash comparison (roadmap).
 
 ### 2.4 Relation to Current APISession
 
 - **Current**: `APISession` has Token, UserUuid, ExpiryDate, 2FA fields. Token is UUID-like, used as `?token=...`.
 - **Target**: Either:
-  - **Replace** APISession with api_keys: one key per “session” or long-lived key; validate by key_hash; optional expiry; or
+  - **Replace** APISession with api_keys: one key per “session” or long-lived key; validate by api_key lookup (MVP) or key_hash (roadmap); optional expiry; or
   - **Keep** short-lived tokens (e.g. 10d) issued after U/P login and stored in a `sessions` or `api_sessions` table, and **add** api_keys for long-lived programmatic access.
 
 Recommendation: **API keys** for programmatic access (create/list/revoke in settings). Optional short-lived **session tokens** for “login via API” (U/P → token) if needed.
@@ -66,7 +66,7 @@ Recommendation: **API keys** for programmatic access (create/list/revoke in sett
 ## 5. Files (Current Go) to Mirror or Drop
 
 - **Keep logic**: `middleware_auth.go` — authorized URLs, load user by session or token; drop PGP/2FA branches.
-- **API auth**: `FindAPISessionByToken` → replace with “find user by API key” (hash lookup).
+- **API auth**: `FindAPISessionByToken` → replace with “find user by API key” (lookup by api_key in MVP; by key_hash on roadmap).
 - **Auth views**: Login/register POST; remove PGP login and PGP setup routes (see 02-DARK-WEB-STRIP-OUT.md).
 
 API key creation and revocation are described in **06-API-AND-KEY-CREATION.md**.

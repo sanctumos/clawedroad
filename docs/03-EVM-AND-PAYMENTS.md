@@ -44,7 +44,10 @@ Accounting spec (01) still applies: same status machine, completion threshold, r
 ## 6. Currency and Price
 
 - **Current**: `PackagePrice` in one currency (e.g. USD); `GetPrice(currency)` converts via `GetCurrencyRate(base, target)`. Rates from external API (`apis.GetCurrencyRates`).
-- **Target (08)**: **One base: USD**, anchored to **USDC** via the **Alchemy oracle price** in the system. Vendors set listing prices in USD. At checkout/display, convert to ETH/token using Alchemy oracle (USDC as price anchor). Schema: e.g. `package_prices` in USD; conversion to crypto at runtime via oracle.
+- **Target (08)**: **One base: USD**. Vendors set listing prices in USD. At checkout/display, convert to ETH/token using **Alchemy Prices API** (REST, not on-chain oracle):
+  - **ETH/USD**: `GET /prices/v1/tokens/by-symbol?symbols=ETH` (Authorization: Bearer `ALCHEMY_KEY`); use `data[0].prices` where `currency === "USD"`.
+  - **ERC-20/USD**: `POST /prices/v1/<API_KEY>/tokens/by-address` with `addresses: [{ network, address }]`; response includes USD price per token. Use for admin-configured tokens (by contract address).
+  Alchemy Prices API aggregates CEX + DEX data; no on-chain oracle required. **Optional fallback**: If Alchemy pricing is unavailable or incomplete, use **CoinGecko** (or similar) as secondary source. Schema: e.g. `package_prices` in USD; conversion to crypto at runtime via Prices API (Python cron or PHP can cache).
 
 ## 7. Commission and Referral (EVM)
 

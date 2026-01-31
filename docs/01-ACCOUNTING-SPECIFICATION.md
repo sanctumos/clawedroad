@@ -177,7 +177,7 @@ Deposits are **not** part of the main escrow accounting; they are vendor-side ba
 - **CancelCompletedAndNotDispatchedTransactions**: COMPLETED + DISPATCH PENDING and created ≥ 72h ago → Freeze (“not dispatched in 3 days”).
 - **TaskUpdateBalancesOrRecentlyReleasedAndCancelledTransactions** / **TaskFinalizeReleasedAndCancelledTransactionsWithNonZeroAmount**: Reconcile status with chain (update amount/status from chain for recently released/cancelled).
 
-**Re-implementation**: Same logic in Python async loop (poll Alchemy, update DB via API or direct DB). Durations from config (e.g. `pending_duration`, `completed_duration`, `stuck_duration`).
+**Re-implementation**: Same logic in Python cron (scheduled run; polls Alchemy; updates DB). Durations from config (e.g. `pending_duration`, `completed_duration`, `stuck_duration`).
 
 ---
 

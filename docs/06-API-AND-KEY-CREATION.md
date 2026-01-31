@@ -5,7 +5,7 @@
 ## 1. API on PHP
 
 - **Scope**: The **marketplace API** (list items, stores, categories, countries; get item/store; book package; list/show transaction; release/cancel/shipped; wallet balance/actions; settings; support; disputes; etc.) should be re-implemented on the **PHP** side (plain PHP, no framework).
-- **Auth**: By **API key**. Validate key (hash lookup), load user. **API key inherits user level**: admin, vendor, or customer. No fine-grained scopes in MVP; enforce role on each request.
+- **Auth**: By **API key**. Validate key (lookup by api_key in MVP; roadmap: hashed storage). Load user; **API key inherits user level**: admin, vendor, or customer. No fine-grained scopes in MVP; enforce role on each request.
 - **No PGP**: No PGP 2FA or PGP login; U/P only for web; API key for API. **No 2FA in MVP.**
 
 ## 2. Current API Surface (Reference)

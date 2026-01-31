@@ -131,8 +131,8 @@ This document records decisions made during the planning phase. Treat these as b
 
 ### 8.2 Listing price model
 
-- **Decision**: **One base currency: USD**, anchored to **USDC** via the **Alchemy oracle price** in the system.
-- **Implication**: Vendors set listing prices in USD. At checkout/display, convert to ETH/token using Alchemy oracle (USDC as price anchor). Schema: e.g. `package_prices` in USD; conversion to crypto at runtime via oracle.
+- **Decision**: **One base currency: USD**. Prices from **Alchemy Prices API** (REST: `tokens/by-symbol` for ETH/USD, `tokens/by-address` for ERC-20). Optional fallback: CoinGecko (or similar) if Alchemy pricing is unavailable.
+- **Implication**: Vendors set listing prices in USD. At checkout/display, convert to ETH/token using Alchemy Prices API (no on-chain oracle). Schema: e.g. `package_prices` in USD; conversion at runtime via Prices API (Python or PHP can cache).
 
 ### 8.3 User wallets (buyer funding)
 
@@ -166,7 +166,7 @@ This document records decisions made during the planning phase. Treat these as b
 
 ### 8.9 External repos follow-up (price, API keys, rate limit, .env, treasury vs Tochka)
 
-- **ETH/USD price**: **Alchemy** for our project. (Treasury repo uses Coinbase because that repo buys through Coinbase; we use Alchemy.)
+- **ETH/USD price**: **Alchemy Prices API** (by-symbol for ETH, by-address for ERC-20); optional CoinGecko fallback. (Treasury repo uses Coinbase for that project only.)
 - **API key storage**: **Plain** in MVP (simpler, last_used). **Roadmap**: hashed storage.
 - **Rate limit**: **Per API key**; default **60 requests per minute**. **Roadmap**: pay for higher access.
 - **.env in PHP**: Load **only relevant** .env vars in PHP. .env is shared between Python and PHP, but PHP must not load secrets it doesn't need (avoid creating security exposure).
@@ -197,7 +197,7 @@ For reference, items explicitly **not in MVP** but on the roadmap:
 | Vendor referral | **Roadmap**, not MVP. |
 | Multisig | **Single-key escrow** in MVP; Safe/etc. on **roadmap**. |
 | Tokens | **Admin-configurable**; must be Alchemy-supported; fail if no price/not found. |
-| Listing price | **One base: USD**, anchored to **USDC** via **Alchemy oracle**. |
+| Listing price | **One base: USD**; **Alchemy Prices API** (by-symbol, by-address); optional CoinGecko fallback. |
 | Chains | **Mainnet, Sepolia, Base** only. |
 | Escrow keys | **HD-derived** from one mnemonic. |
 | Commission wallet | **One per chain** (mainnet, Sepolia, Base); set in **.env**. |
@@ -217,7 +217,7 @@ For reference, items explicitly **not in MVP** but on the roadmap:
 | Messages | **No** E2E in MVP. |
 | Secrets | **.env**. |
 | Deployment | **Single-tenant**. |
-| ETH/USD price | **Alchemy** (not Coinbase; treasury uses Coinbase for that repo only). |
+| ETH/USD price | **Alchemy Prices API** (by-symbol, by-address); optional CoinGecko. Treasury repo uses Coinbase for that project only. |
 | API key storage | **Plain** in MVP; **hashed** on roadmap. |
 | Rate limit | **Per API key**, 60/min default; **roadmap**: pay for higher. |
 | .env in PHP | Load **only relevant** vars; shared with Python but no unnecessary secrets in PHP. |
