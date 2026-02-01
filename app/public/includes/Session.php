@@ -60,4 +60,24 @@ final class Session
         }
         session_destroy();
     }
+
+    /** CSRF: generate or return existing token for this request (per-session). */
+    public function getCsrfToken(): string
+    {
+        $this->start();
+        if (empty($_SESSION['csrf_token'])) {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        }
+        return $_SESSION['csrf_token'];
+    }
+
+    /** CSRF: validate token from POST; returns true if valid. */
+    public function validateCsrfToken(string $token): bool
+    {
+        $this->start();
+        if ($token === '' || empty($_SESSION['csrf_token'])) {
+            return false;
+        }
+        return hash_equals($_SESSION['csrf_token'], $token);
+    }
 }

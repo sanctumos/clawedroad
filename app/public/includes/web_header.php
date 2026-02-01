@@ -65,9 +65,30 @@ $currentUser = $currentUser ?? null;
     <a href="/marketplace.php">Marketplace</a>
     <a href="/vendors.php">Vendors</a>
     <?php if ($currentUser): ?>
+        <a href="/settings/user.php">Settings</a>
+        <a href="/referrals.php">Referrals</a>
         <a href="/payments.php">My orders</a>
+        <a href="/support.php">Support</a>
+        <?php
+        $isVendor = false;
+        $myStoreUuid = null;
+        if (isset($pdo) && !empty($currentUser['uuid'])) {
+            $stmt = $pdo->prepare('SELECT store_uuid FROM store_users WHERE user_uuid = ? LIMIT 1');
+            $stmt->execute([$currentUser['uuid']]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($row) {
+                $isVendor = true;
+                $myStoreUuid = $row['store_uuid'];
+            }
+        }
+        if ($isVendor && $myStoreUuid): ?>
+            <a href="/store.php?uuid=<?= urlencode($myStoreUuid) ?>">My store</a>
+            <a href="/item/new.php?store_uuid=<?= urlencode($myStoreUuid) ?>">Add item</a>
+            <a href="/deposits.php">Deposits</a>
+        <?php endif; ?>
+        <?php $role = $currentUser['role'] ?? ''; if ($role === 'staff' || $role === 'admin'): ?><a href="/staff/index.php">Staff</a><?php endif; ?>
+        <?php if ($role === 'admin'): ?><a href="/admin/index.php">Admin</a><?php endif; ?>
         <a href="/create-store.php">Create store</a>
-        <?php if (($currentUser['role'] ?? '') === 'admin'): ?><a href="/admin/index.php">Admin</a><?php endif; ?>
         <a href="/logout.php">Logout (<?= htmlspecialchars($currentUser['username']) ?>)</a>
     <?php else: ?>
         <a href="/login.php">Login</a>

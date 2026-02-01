@@ -21,3 +21,14 @@ def derive_escrow_address(mnemonic: str, transaction_uuid: str) -> str:
     path = f"m/44'/60'/0'/0/{index}"
     acct = Account.from_mnemonic(mnemonic, account_path=path)
     return acct.address
+
+
+def derive_deposit_address(mnemonic: str, deposit_uuid: str) -> str:
+    """
+    Derive EVM address for a deposit (v2.5). Cron fills deposits.address when NULL.
+    Path: m/44'/60'/0'/1/{index} where index = f(deposit_uuid). Separate from escrow (0'/0).
+    """
+    index = _derivation_index(deposit_uuid)
+    path = f"m/44'/60'/0'/1/{index}"
+    acct = Account.from_mnemonic(mnemonic, account_path=path)
+    return acct.address

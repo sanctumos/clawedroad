@@ -14,8 +14,15 @@ def main():
     sys.path.insert(0, str(Path(__file__).resolve().parent))
     from env import load_dotenv, get_required, get
     from db import get_connection
-    from escrow import derive_escrow_address
-    from tasks import run_fill_escrow, run_update_pending, run_fail_old_pending
+    from escrow import derive_escrow_address, derive_deposit_address
+    from tasks import (
+        run_fill_escrow,
+        run_update_pending,
+        run_fail_old_pending,
+        run_fill_deposit_address,
+        run_update_deposit_balances,
+        run_process_withdraw_intents,
+    )
     from alchemy_client import get_balance_wei, wei_to_eth
 
     load_dotenv(BASE_DIR)
@@ -42,6 +49,10 @@ def main():
     if api_key:
         run_update_pending(conn, get_balance_eth, tolerance=0.05)
         run_fail_old_pending(conn, config_get)
+    run_fill_deposit_address(conn, mnemonic, derive_deposit_address)
+    if api_key:
+        run_update_deposit_balances(conn, get_balance_eth)
+    run_process_withdraw_intents(conn)
     conn.close()
     print("Cron run done.")
 

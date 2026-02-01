@@ -86,3 +86,83 @@ def run_fail_old_pending(conn, config_get):
             (tx_uuid, now, now),
         )
     conn.commit()
+
+
+def run_fill_deposit_address(conn, mnemonic, derive_deposit_address):
+    """Fill deposits.address for rows where address IS NULL. v2.5 Vendor CMS."""
+    cur = conn.cursor()
+    cur.execute("SELECT uuid FROM deposits WHERE (address IS NULL OR address = '') AND deleted_at IS NULL")
+    rows = cur.fetchall()
+    now = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+    for (deposit_uuid,) in rows:
+        address = derive_deposit_address(mnemonic, deposit_uuid)
+        cur.execute(
+            "UPDATE deposits SET address = ?, updated_at = ? WHERE uuid = ?",
+            (address, now, deposit_uuid),
+        )
+    conn.commit()
+
+
+def run_update_deposit_balances(conn, get_balance_eth):
+    """Update deposits.crypto_value from chain balance for deposits that have an address. v2.5."""
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT d.uuid, d.address, d.crypto
+        FROM deposits d
+        WHERE d.address IS NOT NULL AND d.address != '' AND d.deleted_at IS NULL
+    """)
+    deposits = cur.fetchall()
+    now = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+    for deposit_uuid, address, crypto in deposits:
+        cur.execute("SELECT chain_id FROM accepted_tokens WHERE symbol = ? LIMIT 1", (crypto,))
+        row = cur.fetchone()
+        if not row:
+            continue
+        chain_id = row[0]
+        try:
+            balance = get_balance_eth(address, chain_id)
+        except Exception:
+            continue
+        cur.execute(
+            "UPDATE deposits SET crypto_value = ?, updated_at = ? WHERE uuid = ?",
+            (balance, now, deposit_uuid),
+        )
+    conn.commit()
+
+
+def run_process_withdraw_intents(conn):
+    """
+    Process deposit_withdraw_intents with status 'pending'.
+    Stub: mark as completed and insert deposit_history (withdrawal). Real implementation
+    would sign and send tx from deposit address to to_address.
+    """
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT id, deposit_uuid, to_address, requested_at, requested_by_user_uuid
+        FROM deposit_withdraw_intents
+        WHERE status = 'pending'
+    """)
+    rows = cur.fetchall()
+    now = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+    for row in rows:
+        intent_id, deposit_uuid, to_address, requested_at, requested_by = row
+        cur.execute("SELECT crypto_value FROM deposits WHERE uuid = ?", (deposit_uuid,))
+        dep = cur.fetchone()
+        if not dep:
+            cur.execute("UPDATE deposit_withdraw_intents SET status = 'failed' WHERE id = ?", (intent_id,))
+            continue
+        amount = float(dep[0] or 0)
+        if amount <= 0:
+            cur.execute("UPDATE deposit_withdraw_intents SET status = 'failed' WHERE id = ?", (intent_id,))
+            continue
+        # Stub: record withdrawal in history and mark intent completed. Real impl would send tx.
+        import uuid
+        history_uuid = uuid.uuid4().hex
+        cur.execute(
+            """INSERT INTO deposit_history (uuid, deposit_uuid, action, value, created_at)
+               VALUES (?, ?, 'withdraw', ?, ?)""",
+            (history_uuid, deposit_uuid, -amount, now),
+        )
+        cur.execute("UPDATE deposits SET crypto_value = 0, updated_at = ? WHERE uuid = ?", (now, deposit_uuid))
+        cur.execute("UPDATE deposit_withdraw_intents SET status = 'completed' WHERE id = ?", (intent_id,))
+    conn.commit()

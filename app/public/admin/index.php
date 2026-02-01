@@ -80,5 +80,5 @@ require_once __DIR__ . '/../includes/web_header.php';
     </table>
     <?php endif; ?>
 </section>
-<p><a href="/marketplace.php" class="btn">← Marketplace</a></p>
+<p><a href="/admin/users.php" class="btn">Users</a> <a href="/marketplace.php" class="btn">← Marketplace</a></p>
 <?php require_once __DIR__ . '/../includes/web_footer.php'; ?>

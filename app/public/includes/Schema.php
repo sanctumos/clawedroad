@@ -39,6 +39,17 @@ final class Schema
         $this->createDisputes();
         $this->createDisputeClaims();
         $this->createTransactionIntents();
+        $this->createPasswordResetTokens();
+        $this->createRecoveryRateLimit();
+        $this->createInviteCodes();
+        $this->createReviews();
+        $this->createStoreWarnings();
+        $this->createSupportTickets();
+        $this->createSupportTicketMessages();
+        $this->createPrivateMessages();
+        $this->createDepositWithdrawIntents();
+        $this->createAuditLog();
+        $this->addV25Columns();
         $this->createConfig();
         $this->createApiKeys();
         $this->createApiKeyRequests();
@@ -350,7 +361,7 @@ final class Schema
             store_uuid TEXT NOT NULL,
             currency TEXT NOT NULL,
             crypto TEXT NOT NULL,
-            address TEXT NOT NULL,
+            address TEXT,
             crypto_value REAL NOT NULL,
             fiat_value REAL NOT NULL,
             currency_rate REAL NOT NULL,
@@ -448,5 +459,240 @@ final class Schema
             contract_address TEXT,
             created_at TEXT NOT NULL {$unique}
         )");
+    }
+
+    private function createPasswordResetTokens(): void
+    {
+        $pk = $this->pk();
+        $this->exec("CREATE TABLE IF NOT EXISTS password_reset_tokens (
+            id {$pk},
+            user_uuid TEXT NOT NULL,
+            token TEXT NOT NULL,
+            expires_at TEXT NOT NULL,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY (user_uuid) REFERENCES users(uuid)
+        )");
+        if (!$this->sqlite) {
+            $this->exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_password_reset_tokens_token ON password_reset_tokens(token)');
+            $this->exec('CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_user ON password_reset_tokens(user_uuid)');
+        } else {
+            $this->exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_password_reset_tokens_token ON password_reset_tokens(token)');
+            $this->exec('CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_user ON password_reset_tokens(user_uuid)');
+        }
+    }
+
+    private function createRecoveryRateLimit(): void
+    {
+        $this->exec('CREATE TABLE IF NOT EXISTS recovery_rate_limit (
+            id ' . $this->pk() . ',
+            ip_hash TEXT NOT NULL,
+            requested_at TEXT NOT NULL
+        )');
+        if (!$this->sqlite) {
+            $this->exec('CREATE INDEX IF NOT EXISTS idx_recovery_rate_limit_ip ON recovery_rate_limit(ip_hash)');
+            $this->exec('CREATE INDEX IF NOT EXISTS idx_recovery_rate_limit_at ON recovery_rate_limit(requested_at)');
+        } else {
+            $this->exec('CREATE INDEX IF NOT EXISTS idx_recovery_rate_limit_ip ON recovery_rate_limit(ip_hash)');
+            $this->exec('CREATE INDEX IF NOT EXISTS idx_recovery_rate_limit_at ON recovery_rate_limit(requested_at)');
+        }
+    }
+
+    private function createInviteCodes(): void
+    {
+        $pk = $this->pk();
+        $this->exec("CREATE TABLE IF NOT EXISTS invite_codes (
+            id {$pk},
+            code TEXT NOT NULL,
+            created_by_user_uuid TEXT,
+            used_by_user_uuid TEXT,
+            used_at TEXT,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY (created_by_user_uuid) REFERENCES users(uuid),
+            FOREIGN KEY (used_by_user_uuid) REFERENCES users(uuid)
+        )");
+        if (!$this->sqlite) {
+            $this->exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_invite_codes_code ON invite_codes(code)');
+        } else {
+            $this->exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_invite_codes_code ON invite_codes(code)');
+        }
+    }
+
+    private function createReviews(): void
+    {
+        $pk = $this->pk();
+        $unique = $this->sqlite ? 'UNIQUE' : 'UNIQUE';
+        $this->exec("CREATE TABLE IF NOT EXISTS reviews (
+            id {$pk},
+            transaction_uuid TEXT NOT NULL {$unique},
+            store_uuid TEXT NOT NULL,
+            rater_user_uuid TEXT NOT NULL,
+            score INTEGER NOT NULL,
+            comment TEXT,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY (transaction_uuid) REFERENCES transactions(uuid),
+            FOREIGN KEY (store_uuid) REFERENCES stores(uuid),
+            FOREIGN KEY (rater_user_uuid) REFERENCES users(uuid)
+        )");
+        if (!$this->sqlite) {
+            $this->exec('CREATE INDEX IF NOT EXISTS idx_reviews_store ON reviews(store_uuid)');
+        } else {
+            $this->exec('CREATE INDEX IF NOT EXISTS idx_reviews_store ON reviews(store_uuid)');
+        }
+    }
+
+    private function createStoreWarnings(): void
+    {
+        $pk = $this->pk();
+        $this->exec("CREATE TABLE IF NOT EXISTS store_warnings (
+            id {$pk},
+            store_uuid TEXT NOT NULL,
+            author_user_uuid TEXT NOT NULL,
+            message TEXT NOT NULL,
+            status TEXT NOT NULL,
+            created_at TEXT NOT NULL,
+            updated_at TEXT,
+            resolved_at TEXT,
+            acked_at TEXT,
+            FOREIGN KEY (store_uuid) REFERENCES stores(uuid),
+            FOREIGN KEY (author_user_uuid) REFERENCES users(uuid)
+        )");
+        if (!$this->sqlite) {
+            $this->exec('CREATE INDEX IF NOT EXISTS idx_store_warnings_store ON store_warnings(store_uuid)');
+        } else {
+            $this->exec('CREATE INDEX IF NOT EXISTS idx_store_warnings_store ON store_warnings(store_uuid)');
+        }
+    }
+
+    private function createSupportTickets(): void
+    {
+        $pk = $this->pk();
+        $this->exec("CREATE TABLE IF NOT EXISTS support_tickets (
+            id {$pk},
+            user_uuid TEXT NOT NULL,
+            subject TEXT NOT NULL,
+            status TEXT NOT NULL,
+            created_at TEXT NOT NULL,
+            updated_at TEXT,
+            FOREIGN KEY (user_uuid) REFERENCES users(uuid)
+        )");
+        if (!$this->sqlite) {
+            $this->exec('CREATE INDEX IF NOT EXISTS idx_support_tickets_user ON support_tickets(user_uuid)');
+        } else {
+            $this->exec('CREATE INDEX IF NOT EXISTS idx_support_tickets_user ON support_tickets(user_uuid)');
+        }
+    }
+
+    private function createSupportTicketMessages(): void
+    {
+        $pk = $this->pk();
+        $this->exec("CREATE TABLE IF NOT EXISTS support_ticket_messages (
+            id {$pk},
+            ticket_id INTEGER NOT NULL,
+            user_uuid TEXT NOT NULL,
+            body TEXT NOT NULL,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY (ticket_id) REFERENCES support_tickets(id),
+            FOREIGN KEY (user_uuid) REFERENCES users(uuid)
+        )");
+        if (!$this->sqlite) {
+            $this->exec('CREATE INDEX IF NOT EXISTS idx_support_ticket_messages_ticket ON support_ticket_messages(ticket_id, created_at)');
+        } else {
+            $this->exec('CREATE INDEX IF NOT EXISTS idx_support_ticket_messages_ticket ON support_ticket_messages(ticket_id, created_at)');
+        }
+    }
+
+    private function createPrivateMessages(): void
+    {
+        $pk = $this->pk();
+        $this->exec("CREATE TABLE IF NOT EXISTS private_messages (
+            id {$pk},
+            from_user_uuid TEXT NOT NULL,
+            to_user_uuid TEXT NOT NULL,
+            body TEXT NOT NULL,
+            read_at TEXT,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY (from_user_uuid) REFERENCES users(uuid),
+            FOREIGN KEY (to_user_uuid) REFERENCES users(uuid)
+        )");
+        if (!$this->sqlite) {
+            $this->exec('CREATE INDEX IF NOT EXISTS idx_private_messages_from ON private_messages(from_user_uuid, created_at)');
+            $this->exec('CREATE INDEX IF NOT EXISTS idx_private_messages_to ON private_messages(to_user_uuid, created_at)');
+        } else {
+            $this->exec('CREATE INDEX IF NOT EXISTS idx_private_messages_from ON private_messages(from_user_uuid, created_at)');
+            $this->exec('CREATE INDEX IF NOT EXISTS idx_private_messages_to ON private_messages(to_user_uuid, created_at)');
+        }
+    }
+
+    private function createDepositWithdrawIntents(): void
+    {
+        $pk = $this->pk();
+        $this->exec("CREATE TABLE IF NOT EXISTS deposit_withdraw_intents (
+            id {$pk},
+            deposit_uuid TEXT NOT NULL,
+            to_address TEXT NOT NULL,
+            requested_at TEXT NOT NULL,
+            requested_by_user_uuid TEXT NOT NULL,
+            status TEXT NOT NULL,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY (deposit_uuid) REFERENCES deposits(uuid),
+            FOREIGN KEY (requested_by_user_uuid) REFERENCES users(uuid)
+        )");
+        if (!$this->sqlite) {
+            $this->exec('CREATE INDEX IF NOT EXISTS idx_deposit_withdraw_intents_deposit ON deposit_withdraw_intents(deposit_uuid)');
+            $this->exec('CREATE INDEX IF NOT EXISTS idx_deposit_withdraw_intents_status ON deposit_withdraw_intents(status)');
+        } else {
+            $this->exec('CREATE INDEX IF NOT EXISTS idx_deposit_withdraw_intents_deposit ON deposit_withdraw_intents(deposit_uuid)');
+            $this->exec('CREATE INDEX IF NOT EXISTS idx_deposit_withdraw_intents_status ON deposit_withdraw_intents(status)');
+        }
+    }
+
+    private function createAuditLog(): void
+    {
+        $pk = $this->pk();
+        $this->exec("CREATE TABLE IF NOT EXISTS audit_log (
+            id {$pk},
+            actor_user_uuid TEXT NOT NULL,
+            action_type TEXT NOT NULL,
+            target_type TEXT NOT NULL,
+            target_id TEXT NOT NULL,
+            metadata TEXT,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY (actor_user_uuid) REFERENCES users(uuid)
+        )");
+        if (!$this->sqlite) {
+            $this->exec('CREATE INDEX IF NOT EXISTS idx_audit_log_actor ON audit_log(actor_user_uuid)');
+            $this->exec('CREATE INDEX IF NOT EXISTS idx_audit_log_target ON audit_log(target_type, target_id)');
+        } else {
+            $this->exec('CREATE INDEX IF NOT EXISTS idx_audit_log_actor ON audit_log(actor_user_uuid)');
+            $this->exec('CREATE INDEX IF NOT EXISTS idx_audit_log_target ON audit_log(target_type, target_id)');
+        }
+    }
+
+    private function addV25Columns(): void
+    {
+        $this->addColumnIfMissing('stores', 'withdraw_address', 'TEXT');
+        $this->addColumnIfMissing('transactions', 'buyer_confirmed_at', 'TEXT');
+        $this->addColumnIfMissing('disputes', 'transaction_uuid', 'TEXT');
+        $this->addColumnIfMissing('dispute_claims', 'user_uuid', 'TEXT');
+    }
+
+    private function addColumnIfMissing(string $table, string $column, string $definition): void
+    {
+        if ($this->sqlite) {
+            $stmt = $this->pdo->query("PRAGMA table_info({$table})");
+            $columns = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            foreach ($columns as $col) {
+                if (strcasecmp($col['name'], $column) === 0) {
+                    return;
+                }
+            }
+            $this->exec("ALTER TABLE {$table} ADD COLUMN {$column} {$definition}");
+        } else {
+            $stmt = $this->pdo->query("SHOW COLUMNS FROM {$table} LIKE " . $this->pdo->quote($column));
+            if ($stmt->fetch() !== false) {
+                return;
+            }
+            $this->exec("ALTER TABLE {$table} ADD COLUMN {$column} {$definition}");
+        }
     }
 }

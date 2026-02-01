@@ -1,7 +1,9 @@
 <form method="post" action="/register.php">
+    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($session->getCsrfToken()) ?>">
+    <?php if (!empty($inviteCode)): ?><input type="hidden" name="invite" value="<?= htmlspecialchars($inviteCode) ?>"><?php endif; ?>
     <div class="form-group">
         <label for="reg-username">Username</label>
-        <input id="reg-username" type="text" name="username" maxlength="16" required autocomplete="username">
+        <input id="reg-username" type="text" name="username" maxlength="16" required autocomplete="username" value="<?= isset($regUsername) ? htmlspecialchars($regUsername) : '' ?>">
     </div>
     <div class="form-group">
         <label for="reg-password">Password (min 8 characters)</label>

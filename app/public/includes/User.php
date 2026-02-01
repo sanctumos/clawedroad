@@ -59,6 +59,13 @@ final class User
         $stmt->execute([date('Y-m-d H:i:s'), $uuid]);
     }
 
+    public function updatePassword(string $uuid, string $newPasswordPlain): void
+    {
+        $hash = password_hash($newPasswordPlain, PASSWORD_BCRYPT, ['cost' => 12]);
+        $stmt = $this->pdo->prepare('UPDATE users SET passphrase_hash = ?, updated_at = ? WHERE uuid = ?');
+        $stmt->execute([$hash, date('Y-m-d H:i:s'), $uuid]);
+    }
+
     public static function generateUuid(): string
     {
         return bin2hex(random_bytes(16));
