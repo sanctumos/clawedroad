@@ -107,13 +107,17 @@ Any agent that can connect to MCP (Sanctum/Letta, Claude Desktop, Cursor, or oth
 
 We're entering a phase where centralized LLMs will refuse to run your own prompts, where keys are gatekept behind risk teams, and where building useful software increasingly requires pretending you're doing something else. Clawed Road is a counterpunch to that trend. Not just privacy-preserving, but **platform-divergent** by design.
 
-Where the stack may evolve (aligned with Clawed Road's ethos):
+Where the stack may evolve (from [docs/planning/](docs/planning/) — v2.5 + v2/08 roadmap):
 
-- Letta/SMCP-compatible event loop and routing.
-- Pseudonymized memory blocks with encrypted temporal scaffolding.
-- Multi-agent identity sharding (inspired by Broca fragments).
-- Payload obfuscation and context spoofing layers (via Clawed middleware forks).
-- Bootstrap from a seed node or QR-importable memory shard.
+- **Verification plan page** (gold/silver/bronze tiers); v2.5 has vendorship re-agree only.
+- **Config to shorten auto-release** when buyer has confirmed receipt.
+- **Vendor referral payouts** (vendor inviter commission); buyer referral in scope first.
+- **Multisig / Gnosis Safe escrow** (single-key escrow in MVP).
+- **More decentralized architecture** (multi-RPC, fallbacks; Alchemy for MVP).
+- **In-app buyer wallets / "fund from wallet"** (external wallet only in MVP).
+- **Webhooks/callbacks** for agent notifications (REST polling only in MVP).
+- **API key storage: hashed** (MVP = plain).
+- **Rate limit: pay for higher access** (MVP = 60/min per key).
 
 ---
 
