@@ -31,7 +31,8 @@ final class Env
         if (self::$vars !== null) {
             return;
         }
-        $path = $baseDir . DIRECTORY_SEPARATOR . '.env';
+        $loadDir = getenv('MARKETPLACE_APP_DIR') ?: $baseDir;
+        $path = $loadDir . DIRECTORY_SEPARATOR . '.env';
         $vars = [];
         if (is_file($path) && is_readable($path)) {
             $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);

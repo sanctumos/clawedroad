@@ -11,6 +11,13 @@ abstract class E2ETestCase extends TestCase
         $tmpDir = sys_get_temp_dir();
         $responseFile = $tmpDir . DIRECTORY_SEPARATOR . 'marketplace_e2e_resp_' . getmypid() . '_' . uniqid('', true) . '.json';
         $requestFile = $tmpDir . DIRECTORY_SEPARATOR . 'marketplace_e2e_req_' . getmypid() . '_' . uniqid('', true) . '.json';
+        // Ensure child process uses same app dir for .env (test DB)
+        if (!isset($request['app_dir']) && defined('TEST_BASE_DIR')) {
+            $absAppDir = realpath(TEST_BASE_DIR);
+            if ($absAppDir !== false) {
+                $request['app_dir'] = $absAppDir;
+            }
+        }
         file_put_contents($requestFile, json_encode($request));
         $php = PHP_BINARY;
         $runner = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'run_request.php';
@@ -41,6 +48,18 @@ abstract class E2ETestCase extends TestCase
             }
         }
         return $cookies;
+    }
+
+    /** Extract CSRF token from HTML body (form input or first 64-char hex value). */
+    protected static function extractCsrfFromBody(string $body): string
+    {
+        if (preg_match('/name=["\']?csrf_token["\']?\s+value=["\']([^"\']+)["\']/', $body, $m)) {
+            return $m[1];
+        }
+        if (preg_match('/value=["\']([a-f0-9]{64})["\']/', $body, $m)) {
+            return $m[1];
+        }
+        return '';
     }
 
     /** POST login.php with credentials; returns cookies array for use in runRequest(['cookies' => ...]). Returns [] if login did not redirect (302). */

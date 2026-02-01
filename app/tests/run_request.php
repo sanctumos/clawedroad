@@ -25,6 +25,15 @@ if (!is_array($request)) {
     exit(1);
 }
 
+// So the app loads .env from the same path as the test runner (test DB)
+if (!empty($request['app_dir'])) {
+    putenv('MARKETPLACE_APP_DIR=' . $request['app_dir']);
+    // Vary REMOTE_ADDR per request so login/recovery rate limits don't block E2E
+    if (!isset($_SERVER['REMOTE_ADDR']) || $_SERVER['REMOTE_ADDR'] === '') {
+        $_SERVER['REMOTE_ADDR'] = '127.0.0.' . (abs(crc32($requestFile)) % 254 + 1);
+    }
+}
+
 $_SERVER['REQUEST_METHOD'] = $request['method'] ?? 'GET';
 $_GET = $request['get'] ?? [];
 $_POST = $request['post'] ?? [];

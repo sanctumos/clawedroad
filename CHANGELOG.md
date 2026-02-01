@@ -8,6 +8,35 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.5.0-dev] - 2026-01-31
+
+### Added
+
+- **V2.5 build (Phases 1–11)** — Schema: `password_reset_tokens`, `invite_codes`, `reviews`, `store_warnings`, `support_tickets`, `support_ticket_messages`, `private_messages`, `deposit_withdraw_intents`, `audit_log`; `stores.withdraw_address`, `transactions.buyer_confirmed_at`, `disputes.transaction_uuid`, `dispute_claims.user_uuid`; `recovery_rate_limit`, `login_rate_limit`. Nav: Settings, Referrals, My orders, Support, vendor (My store, Add item, Deposits), Staff.
+- **User & settings** — Public profile `user.php?username=…`; `settings/user.php` (change password), `settings/store.php` (store name, description, withdraw address, vendorship re-agree); `referrals.php` (referral link, referred users, earnings); `verification/agreement.php`, `verification/plan.php`.
+- **Auth** — `recover.php` (password recovery, token shown in UI, 5/hr per IP, CSRF); register with optional `?invite=CODE`; `admin/users.php` (list users, ban, grant staff, grant seller; admin-only, CSRF, AuditLog); login rate limit 10 attempts / 5 min per IP.
+- **Vendor CMS** — `deposits.php`, `deposits/add.php`, `deposits/withdraw.php` (owner-only, `to_address` from store); `item/edit.php` (edit, soft-delete; store membership). Python cron: fill deposit addresses, update balances, process withdrawal intents.
+- **Store & reviews** — `store.php` tabs: Items, Reviews, Warnings; staff resolve/acknowledge warnings; `review/add.php` for buyers after RELEASED.
+- **Transactions** — `payment.php` action buttons and POST handlers per state/permission matrix (mark shipped, release, cancel, confirm received, open dispute).
+- **Disputes** — `dispute/new.php` (start dispute, link tx, FROZEN); `dispute.php` (detail, add claim; staff resolve/partial refund; AuditLog); `staff/disputes.php`.
+- **Support** — `support.php`, `support/new.php` (5 tickets/hr), `support/ticket.php` (thread, reply, 20 msgs/hr; staff set status; AuditLog).
+- **Private messages** — `messages.php` (conversations, thread, send; 10 msgs/min, body ≤10k; CSRF).
+- **Staff dashboard** — `staff/index.php` (staff/admin); `staff/stores.php`, `staff/tickets.php`, `staff/disputes.php`, `staff/warnings.php`, `staff/deposits.php`, `staff/stats.php`, `staff/categories.php` (CRUD item_categories).
+- **E2E full-site coverage** — Anonymous redirects for all auth-required pages; customer 200 for referrals, support, deposits, messages, settings, verification/agreement; dispute/review/item/edit/support-ticket paths (302, 404); customer 403 on staff and admin/users (via seeded `e2e_customer`); admin 200 for admin/users and all staff pages. **RecoverE2ETest**, **UserProfileE2ETest**. **121 E2E tests** (Unit + Integration + E2E).
+
+### Changed
+
+- **E2E runner** — Request JSON may include `app_dir` (absolute path); runner sets `MARKETPLACE_APP_DIR` so child process uses test `.env` and test DB. In test mode, `REMOTE_ADDR` varied per request to avoid login/recovery rate limits. `Env::load()` uses `MARKETPLACE_APP_DIR` when set.
+- **E2E helpers** — `E2ETestCase::extractCsrfFromBody()` for CSRF from HTML; `runRequest()` adds `app_dir` from `TEST_BASE_DIR`. Register E2E: GET form then POST with CSRF and cookies; error tests accept "Invalid request" when CSRF missing.
+- **Test bootstrap** — Seeds non-admin user `e2e_customer` / `password123` for E2E customer-403 tests.
+
+### Fixed
+
+- **referrals.php** — Removed extra `)` that caused parse error (line 22).
+- **admin/users.php** — Initialize `$postSubjectUuid`; guard `$targetUuid` / `$targetUsername` before `findByUuid` / `findByUsername` to avoid null and fatal.
+
+---
+
 ## [2.3.0-dev] - 2026-01-31
 
 ### Added
@@ -100,6 +129,7 @@ First changelog entry. Clawed Road is **in development**—not yet stable. **2.0
 
 ---
 
+[2.5.0-dev]: https://github.com/your-org/clawed-road/releases/tag/v2.5.0-dev
 [2.3.0-dev]: https://github.com/your-org/clawed-road/releases/tag/v2.3.0-dev
 [2.2.0-dev]: https://github.com/your-org/clawed-road/releases/tag/v2.2.0-dev
 [2.1.0-dev]: https://github.com/your-org/clawed-road/releases/tag/v2.1.0-dev

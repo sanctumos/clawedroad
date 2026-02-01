@@ -64,6 +64,121 @@ final class FullStackE2ETest extends E2ETestCase
         $this->assertSame(302, $res['code']);
     }
 
+    public function testAnonymousReferralsRedirectsToLogin(): void
+    {
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'referrals.php', 'get' => [], 'post' => [], 'headers' => []]);
+        $this->assertSame(302, $res['code']);
+    }
+
+    public function testAnonymousSupportRedirectsToLogin(): void
+    {
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'support.php', 'get' => [], 'post' => [], 'headers' => []]);
+        $this->assertSame(302, $res['code']);
+    }
+
+    public function testAnonymousSupportNewRedirectsToLogin(): void
+    {
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'support/new.php', 'get' => [], 'post' => [], 'headers' => []]);
+        $this->assertSame(302, $res['code']);
+    }
+
+    public function testAnonymousDepositsRedirectsToLogin(): void
+    {
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'deposits.php', 'get' => [], 'post' => [], 'headers' => []]);
+        $this->assertSame(302, $res['code']);
+    }
+
+    public function testAnonymousDepositsAddRedirectsToLogin(): void
+    {
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'deposits/add.php', 'get' => [], 'post' => [], 'headers' => []]);
+        $this->assertSame(302, $res['code']);
+    }
+
+    public function testAnonymousDepositsWithdrawRedirectsToLogin(): void
+    {
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'deposits/withdraw.php', 'get' => [], 'post' => [], 'headers' => []]);
+        $this->assertSame(302, $res['code']);
+    }
+
+    public function testAnonymousSettingsUserRedirectsToLogin(): void
+    {
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'settings/user.php', 'get' => [], 'post' => [], 'headers' => []]);
+        $this->assertSame(302, $res['code']);
+    }
+
+    public function testAnonymousSettingsStoreRedirectsToLogin(): void
+    {
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'settings/store.php', 'get' => [], 'post' => [], 'headers' => []]);
+        $this->assertSame(302, $res['code']);
+    }
+
+    public function testAnonymousVerificationAgreementRedirectsToLogin(): void
+    {
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'verification/agreement.php', 'get' => [], 'post' => [], 'headers' => []]);
+        $this->assertSame(302, $res['code']);
+    }
+
+    public function testAnonymousMessagesRedirectsToLogin(): void
+    {
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'messages.php', 'get' => [], 'post' => [], 'headers' => []]);
+        $this->assertSame(302, $res['code']);
+    }
+
+    public function testAnonymousDisputeNoUuidRedirectsToPayments(): void
+    {
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'dispute.php', 'get' => [], 'post' => [], 'headers' => []]);
+        $this->assertSame(302, $res['code']);
+    }
+
+    public function testAnonymousDisputeWithUuidRedirectsToLogin(): void
+    {
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'dispute.php', 'get' => ['uuid' => '00000000000000000000000000000000'], 'post' => [], 'headers' => []]);
+        $this->assertSame(302, $res['code']);
+    }
+
+    public function testAnonymousDisputeNewRedirectsToLogin(): void
+    {
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'dispute/new.php', 'get' => [], 'post' => [], 'headers' => []]);
+        $this->assertSame(302, $res['code']);
+    }
+
+    public function testAnonymousReviewAddRedirectsToLogin(): void
+    {
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'review/add.php', 'get' => [], 'post' => [], 'headers' => []]);
+        $this->assertSame(302, $res['code']);
+    }
+
+    public function testAnonymousItemEditNoUuidRedirectsToMarketplace(): void
+    {
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'item/edit.php', 'get' => [], 'post' => [], 'headers' => []]);
+        $this->assertSame(302, $res['code']);
+    }
+
+    public function testAnonymousItemEditWithUuidRedirectsToLogin(): void
+    {
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'item/edit.php', 'get' => ['uuid' => '00000000000000000000000000000000'], 'post' => [], 'headers' => []]);
+        $this->assertSame(302, $res['code']);
+    }
+
+    public function testAnonymousAdminUsersRedirectsToLogin(): void
+    {
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'admin/users.php', 'get' => [], 'post' => [], 'headers' => []]);
+        $this->assertSame(302, $res['code']);
+    }
+
+    public function testAnonymousStaffIndexRedirectsToLogin(): void
+    {
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'staff/index.php', 'get' => [], 'post' => [], 'headers' => []]);
+        $this->assertSame(302, $res['code']);
+    }
+
+    public function testAnonymousVerificationPlanReturns200(): void
+    {
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'verification/plan.php', 'get' => [], 'post' => [], 'headers' => []]);
+        $this->assertSame(200, $res['code']);
+        $this->assertStringContainsString('Verification', $res['body']);
+    }
+
     // ---- Anonymous: public API 200, session-required API 401 ----
     public function testAnonymousApiStoresGetReturns200(): void
     {
@@ -156,6 +271,164 @@ final class FullStackE2ETest extends E2ETestCase
         $this->assertStringContainsString('Create store', $res['body']);
     }
 
+    public function testCustomerReferralsReturns200(): void
+    {
+        $cookies = self::loginAs('admin', 'admin');
+        $this->assertNotEmpty($cookies);
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'referrals.php', 'get' => [], 'post' => [], 'headers' => [], 'cookies' => $cookies]);
+        $this->assertSame(200, $res['code']);
+        $this->assertStringContainsString('Referrals', $res['body']);
+    }
+
+    public function testCustomerSupportReturns200(): void
+    {
+        $cookies = self::loginAs('admin', 'admin');
+        $this->assertNotEmpty($cookies);
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'support.php', 'get' => [], 'post' => [], 'headers' => [], 'cookies' => $cookies]);
+        $this->assertSame(200, $res['code']);
+        $this->assertStringContainsString('Support', $res['body']);
+    }
+
+    public function testCustomerSupportNewGetReturns200(): void
+    {
+        $cookies = self::loginAs('admin', 'admin');
+        $this->assertNotEmpty($cookies);
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'support/new.php', 'get' => [], 'post' => [], 'headers' => [], 'cookies' => $cookies]);
+        $this->assertSame(200, $res['code']);
+        $this->assertStringContainsString('New ticket', $res['body']);
+    }
+
+    public function testCustomerDepositsReturns200(): void
+    {
+        $cookies = self::loginAs('admin', 'admin');
+        $this->assertNotEmpty($cookies);
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'deposits.php', 'get' => [], 'post' => [], 'headers' => [], 'cookies' => $cookies]);
+        $this->assertSame(200, $res['code']);
+        $this->assertStringContainsString('Deposits', $res['body']);
+    }
+
+    public function testCustomerDepositsAddGetReturns200(): void
+    {
+        $cookies = self::loginAs('admin', 'admin');
+        $this->assertNotEmpty($cookies);
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'deposits/add.php', 'get' => [], 'post' => [], 'headers' => [], 'cookies' => $cookies]);
+        $this->assertSame(200, $res['code']);
+        $this->assertStringContainsString('Add deposit', $res['body']);
+    }
+
+    public function testCustomerDepositsWithdrawNoUuidRedirectsToDeposits(): void
+    {
+        $cookies = self::loginAs('admin', 'admin');
+        $this->assertNotEmpty($cookies);
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'deposits/withdraw.php', 'get' => [], 'post' => [], 'headers' => [], 'cookies' => $cookies]);
+        $this->assertSame(302, $res['code']);
+    }
+
+    public function testCustomerDepositsWithdrawInvalidUuidReturns404(): void
+    {
+        $cookies = self::loginAs('admin', 'admin');
+        $this->assertNotEmpty($cookies);
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'deposits/withdraw.php', 'get' => ['uuid' => '00000000000000000000000000000000'], 'post' => [], 'headers' => [], 'cookies' => $cookies]);
+        $this->assertSame(404, $res['code']);
+        $this->assertStringContainsString('not found', $res['body']);
+    }
+
+    public function testCustomerMessagesReturns200(): void
+    {
+        $cookies = self::loginAs('admin', 'admin');
+        $this->assertNotEmpty($cookies);
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'messages.php', 'get' => [], 'post' => [], 'headers' => [], 'cookies' => $cookies]);
+        $this->assertSame(200, $res['code']);
+        $this->assertStringContainsString('Messages', $res['body']);
+    }
+
+    public function testCustomerSettingsUserGetReturns200(): void
+    {
+        $cookies = self::loginAs('admin', 'admin');
+        $this->assertNotEmpty($cookies);
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'settings/user.php', 'get' => [], 'post' => [], 'headers' => [], 'cookies' => $cookies]);
+        $this->assertSame(200, $res['code']);
+        $this->assertStringContainsString('password', $res['body']);
+    }
+
+    public function testCustomerSettingsStoreGetReturns200(): void
+    {
+        $cookies = self::loginAs('admin', 'admin');
+        $this->assertNotEmpty($cookies);
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'settings/store.php', 'get' => [], 'post' => [], 'headers' => [], 'cookies' => $cookies]);
+        $this->assertSame(200, $res['code']);
+        $this->assertStringContainsString('store', $res['body']);
+    }
+
+    public function testCustomerVerificationAgreementGetReturns200(): void
+    {
+        $cookies = self::loginAs('admin', 'admin');
+        $this->assertNotEmpty($cookies);
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'verification/agreement.php', 'get' => [], 'post' => [], 'headers' => [], 'cookies' => $cookies]);
+        $this->assertSame(200, $res['code']);
+        $this->assertStringContainsString('agreement', $res['body']);
+    }
+
+    public function testCustomerDisputeWithInvalidUuidReturns404(): void
+    {
+        $cookies = self::loginAs('admin', 'admin');
+        $this->assertNotEmpty($cookies);
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'dispute.php', 'get' => ['uuid' => '00000000000000000000000000000000'], 'post' => [], 'headers' => [], 'cookies' => $cookies]);
+        $this->assertSame(404, $res['code']);
+        $this->assertStringContainsString('not found', $res['body']);
+    }
+
+    public function testCustomerDisputeNewNoTransactionRedirectsToPayments(): void
+    {
+        $cookies = self::loginAs('admin', 'admin');
+        $this->assertNotEmpty($cookies);
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'dispute/new.php', 'get' => [], 'post' => [], 'headers' => [], 'cookies' => $cookies]);
+        $this->assertSame(302, $res['code']);
+    }
+
+    public function testCustomerDisputeNewWithInvalidTransactionReturns404(): void
+    {
+        $cookies = self::loginAs('admin', 'admin');
+        $this->assertNotEmpty($cookies);
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'dispute/new.php', 'get' => ['transaction_uuid' => '00000000000000000000000000000000'], 'post' => [], 'headers' => [], 'cookies' => $cookies]);
+        $this->assertSame(404, $res['code']);
+        $this->assertStringContainsString('not found', $res['body']);
+    }
+
+    public function testCustomerItemEditWithInvalidUuidReturns404(): void
+    {
+        $cookies = self::loginAs('admin', 'admin');
+        $this->assertNotEmpty($cookies);
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'item/edit.php', 'get' => ['uuid' => '00000000000000000000000000000000'], 'post' => [], 'headers' => [], 'cookies' => $cookies]);
+        $this->assertSame(404, $res['code']);
+        $this->assertStringContainsString('not found', $res['body']);
+    }
+
+    public function testCustomerReviewAddNoTransactionRedirectsToPayments(): void
+    {
+        $cookies = self::loginAs('admin', 'admin');
+        $this->assertNotEmpty($cookies);
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'review/add.php', 'get' => [], 'post' => [], 'headers' => [], 'cookies' => $cookies]);
+        $this->assertSame(302, $res['code']);
+    }
+
+    public function testCustomerSupportTicketNoIdRedirectsToSupport(): void
+    {
+        $cookies = self::loginAs('admin', 'admin');
+        $this->assertNotEmpty($cookies);
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'support/ticket.php', 'get' => [], 'post' => [], 'headers' => [], 'cookies' => $cookies]);
+        $this->assertSame(302, $res['code']);
+    }
+
+    public function testCustomerSupportTicketInvalidIdReturns404(): void
+    {
+        $cookies = self::loginAs('admin', 'admin');
+        $this->assertNotEmpty($cookies);
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'support/ticket.php', 'get' => ['id' => '999999'], 'post' => [], 'headers' => [], 'cookies' => $cookies]);
+        $this->assertSame(404, $res['code']);
+        $this->assertStringContainsString('not found', $res['body']);
+    }
+
     public function testCustomerCreateStorePostRedirectsToStore(): void
     {
         $cookies = self::loginAs('admin', 'admin');
@@ -241,17 +514,29 @@ final class FullStackE2ETest extends E2ETestCase
         $this->assertArrayHasKey('disputes', $data);
     }
 
+    public function testCustomerStaffIndexReturns403(): void
+    {
+        $cookies = self::loginAs('e2e_customer', 'password123');
+        $this->assertNotEmpty($cookies, 'Login as E2E customer must succeed (seed user e2e_customer/password123)');
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'staff/index.php', 'get' => [], 'post' => [], 'headers' => [], 'cookies' => $cookies]);
+        $this->assertSame(403, $res['code']);
+        $this->assertStringContainsString('Staff or admin only', $res['body']);
+    }
+
+    public function testCustomerAdminUsersReturns403(): void
+    {
+        $cookies = self::loginAs('e2e_customer', 'password123');
+        $this->assertNotEmpty($cookies, 'Login as E2E customer must succeed (seed user e2e_customer/password123)');
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'admin/users.php', 'get' => [], 'post' => [], 'headers' => [], 'cookies' => $cookies]);
+        $this->assertSame(403, $res['code']);
+        $this->assertStringContainsString('Admin only', $res['body']);
+    }
+
     // ---- Customer (non-admin) gets 403 on admin endpoints ----
     public function testCustomerAdminConfigReturns403(): void
     {
-        $username = 'cust_' . substr(bin2hex(random_bytes(4)), 0, 8);
-        $reg = self::runRequest(['method' => 'POST', 'uri' => 'register.php', 'get' => [], 'post' => ['username' => $username, 'password' => 'password123'], 'headers' => []]);
-        $this->assertSame(302, $reg['code']);
-        $cookies = self::parseCookiesFromResponse($reg);
-        if ($cookies === [] && isset($reg['session_name'], $reg['session_id']) && $reg['session_name'] !== '' && $reg['session_id'] !== '') {
-            $cookies = [$reg['session_name'] => $reg['session_id']];
-        }
-        $this->assertNotEmpty($cookies, 'Need session after register');
+        $cookies = self::loginAs('e2e_customer', 'password123');
+        $this->assertNotEmpty($cookies, 'Login as E2E customer must succeed (seed user e2e_customer/password123)');
         $res = self::runRequest(['method' => 'GET', 'uri' => 'admin/config.php', 'get' => [], 'post' => [], 'headers' => [], 'cookies' => $cookies]);
         $this->assertSame(403, $res['code']);
         $data = json_decode($res['body'], true);
@@ -308,6 +593,87 @@ final class FullStackE2ETest extends E2ETestCase
         $this->assertSame(200, $res['code']);
         $data = json_decode($res['body'], true);
         $this->assertTrue($data['ok'] ?? false);
+    }
+
+    public function testAdminUsersGetReturns200(): void
+    {
+        $cookies = self::loginAs('admin', 'admin');
+        $this->assertNotEmpty($cookies);
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'admin/users.php', 'get' => [], 'post' => [], 'headers' => [], 'cookies' => $cookies]);
+        $this->assertSame(200, $res['code']);
+        $this->assertStringContainsString('Users', $res['body']);
+    }
+
+    public function testAdminStaffIndexReturns200(): void
+    {
+        $cookies = self::loginAs('admin', 'admin');
+        $this->assertNotEmpty($cookies);
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'staff/index.php', 'get' => [], 'post' => [], 'headers' => [], 'cookies' => $cookies]);
+        $this->assertSame(200, $res['code']);
+        $this->assertStringContainsString('Staff', $res['body']);
+    }
+
+    public function testAdminStaffStoresReturns200(): void
+    {
+        $cookies = self::loginAs('admin', 'admin');
+        $this->assertNotEmpty($cookies);
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'staff/stores.php', 'get' => [], 'post' => [], 'headers' => [], 'cookies' => $cookies]);
+        $this->assertSame(200, $res['code']);
+        $this->assertStringContainsString('Stores', $res['body']);
+    }
+
+    public function testAdminStaffTicketsReturns200(): void
+    {
+        $cookies = self::loginAs('admin', 'admin');
+        $this->assertNotEmpty($cookies);
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'staff/tickets.php', 'get' => [], 'post' => [], 'headers' => [], 'cookies' => $cookies]);
+        $this->assertSame(200, $res['code']);
+        $this->assertStringContainsString('Tickets', $res['body']);
+    }
+
+    public function testAdminStaffDisputesReturns200(): void
+    {
+        $cookies = self::loginAs('admin', 'admin');
+        $this->assertNotEmpty($cookies);
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'staff/disputes.php', 'get' => [], 'post' => [], 'headers' => [], 'cookies' => $cookies]);
+        $this->assertSame(200, $res['code']);
+        $this->assertStringContainsString('Disputes', $res['body']);
+    }
+
+    public function testAdminStaffWarningsReturns200(): void
+    {
+        $cookies = self::loginAs('admin', 'admin');
+        $this->assertNotEmpty($cookies);
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'staff/warnings.php', 'get' => [], 'post' => [], 'headers' => [], 'cookies' => $cookies]);
+        $this->assertSame(200, $res['code']);
+        $this->assertStringContainsString('Warnings', $res['body']);
+    }
+
+    public function testAdminStaffDepositsReturns200(): void
+    {
+        $cookies = self::loginAs('admin', 'admin');
+        $this->assertNotEmpty($cookies);
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'staff/deposits.php', 'get' => [], 'post' => [], 'headers' => [], 'cookies' => $cookies]);
+        $this->assertSame(200, $res['code']);
+        $this->assertStringContainsString('Deposits', $res['body']);
+    }
+
+    public function testAdminStaffStatsReturns200(): void
+    {
+        $cookies = self::loginAs('admin', 'admin');
+        $this->assertNotEmpty($cookies);
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'staff/stats.php', 'get' => [], 'post' => [], 'headers' => [], 'cookies' => $cookies]);
+        $this->assertSame(200, $res['code']);
+        $this->assertStringContainsString('Stats', $res['body']);
+    }
+
+    public function testAdminStaffCategoriesReturns200(): void
+    {
+        $cookies = self::loginAs('admin', 'admin');
+        $this->assertNotEmpty($cookies);
+        $res = self::runRequest(['method' => 'GET', 'uri' => 'staff/categories.php', 'get' => [], 'post' => [], 'headers' => [], 'cookies' => $cookies]);
+        $this->assertSame(200, $res['code']);
+        $this->assertStringContainsString('Categories', $res['body']);
     }
 
     // ---- Vendor: create store then POST item, GET deposits ----

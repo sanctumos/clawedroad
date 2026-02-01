@@ -72,4 +72,14 @@ if ($adminUsername !== null && $adminUsername !== '') {
             $pdo->prepare('UPDATE users SET passphrase_hash = ? WHERE uuid = ?')->execute([$hash, $existing['uuid']]);
         }
     }
+    // E2E: seed a non-admin customer for tests that need "logged-in customer gets 403 on staff/admin"
+    $customerUsername = 'e2e_customer';
+    $customerPassword = 'password123';
+    $cust = $userRepo->findByUsername($customerUsername);
+    if ($cust === null) {
+        $userRepo->create(User::generateUuid(), $customerUsername, $customerPassword, 'customer', null);
+    } else {
+        $hash = password_hash($customerPassword, PASSWORD_BCRYPT, ['cost' => 12]);
+        $pdo->prepare('UPDATE users SET passphrase_hash = ?, role = ? WHERE uuid = ?')->execute([$hash, 'customer', $cust['uuid']]);
+    }
 }

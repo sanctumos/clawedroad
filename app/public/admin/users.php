@@ -26,6 +26,7 @@ $perPage = 50;
 $targetUuid = isset($_GET['uuid']) ? trim((string) $_GET['uuid']) : null;
 $targetUsername = isset($_GET['username']) ? trim((string) $_GET['username']) : null;
 $detailUser = null;
+$postSubjectUuid = null;
 $message = '';
 $error = '';
 
@@ -81,13 +82,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Resolve detail user by uuid or username (or POST target so we show detail after action)
-if ($postSubjectUuid !== null) {
+if ($postSubjectUuid !== null && $postSubjectUuid !== '') {
     $detailUser = $userRepo->findByUuid($postSubjectUuid);
 }
-if ($detailUser === null && $targetUuid !== '') {
+if ($detailUser === null && $targetUuid !== null && $targetUuid !== '') {
     $detailUser = $userRepo->findByUuid($targetUuid);
 }
-if ($detailUser === null && $targetUsername !== '') {
+if ($detailUser === null && $targetUsername !== null && $targetUsername !== '') {
     $detailUser = $userRepo->findByUsername($targetUsername);
 }
 
