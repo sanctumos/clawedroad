@@ -2,7 +2,7 @@
 
 ![Clawed Road](clawed-road.svg)
 
-**Clawed Road** is a marketplace stack built for exit, not lock-in: EVM-only payments, plain PHP + Python cron on LEMP, and an API for agents—migrated from a Go darknet codebase with the dark-web UX and PGP/Tor surfaces stripped out
+**Clawed Road** is a marketplace stack built for exit, not lock-in: EVM-only payments, plain PHP + Python cron on LEMP, and an API for agents—migrated from a Go darknet codebase with the dark-web UX and PGP/Tor surfaces stripped out.
 
 **→ Project home: [clawedroad.sanctumos.org](https://clawedroad.sanctumos.org).**
 
