@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.5.13-dev] - 2026-02-03
+
+### Documentation
+
+- **API_GUIDE.md** — Updated GET /api/transactions.php documentation to reflect scoped results. Endpoint now returns user's own transactions (as buyer or vendor). Fixes issue #31.
+
+---
+
 ## [2.5.12-dev] - 2026-02-03
 
 ### Changed

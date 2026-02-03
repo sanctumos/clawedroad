@@ -440,7 +440,7 @@ curl -X POST http://localhost/api/items.php \
 
 #### GET /api/transactions.php
 
-List transactions (requires API key or session).
+List transactions for the authenticated user (requires API key or session). Returns transactions where the user is the **buyer** OR transactions for **stores the user belongs to**. Returns up to 100 transactions, ordered by most recent first.
 
 **Query Parameters**: None
 
