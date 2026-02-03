@@ -449,12 +449,16 @@ final class FullStackE2ETest extends E2ETestCase
     {
         $cookies = self::loginAs('admin', 'admin');
         $this->assertNotEmpty($cookies);
+        // Get CSRF token
+        $pageRes = self::runRequest(['method' => 'GET', 'uri' => 'register.php', 'get' => [], 'post' => [], 'headers' => [], 'cookies' => $cookies]);
+        $csrf = self::extractCsrfFromBody($pageRes['body'] ?? '');
+        $this->assertNotSame('', $csrf, 'Should extract CSRF token');
         $storeName = 'e2e_api_' . substr(bin2hex(random_bytes(4)), 0, 6);
         $res = self::runRequest([
             'method' => 'POST',
             'uri' => 'api/stores.php',
             'get' => [],
-            'post' => ['storename' => $storeName, 'description' => 'E2E API store', 'vendorship_agree' => '1'],
+            'post' => ['storename' => $storeName, 'description' => 'E2E API store', 'vendorship_agree' => '1', 'csrf_token' => $csrf],
             'headers' => [],
             'cookies' => $cookies,
         ]);
@@ -478,17 +482,35 @@ final class FullStackE2ETest extends E2ETestCase
     {
         $cookies = self::loginAs('admin', 'admin');
         $this->assertNotEmpty($cookies);
-        $res = self::runRequest(['method' => 'POST', 'uri' => 'api/keys.php', 'get' => [], 'post' => ['name' => 'e2e key'], 'headers' => [], 'cookies' => $cookies]);
+        // Get CSRF token
+        $pageRes = self::runRequest(['method' => 'GET', 'uri' => 'register.php', 'get' => [], 'post' => [], 'headers' => [], 'cookies' => $cookies]);
+        $csrf = self::extractCsrfFromBody($pageRes['body'] ?? '');
+        $this->assertNotSame('', $csrf, 'Should extract CSRF token');
+        $res = self::runRequest(['method' => 'POST', 'uri' => 'api/keys.php', 'get' => [], 'post' => ['name' => 'e2e key', 'csrf_token' => $csrf], 'headers' => [], 'cookies' => $cookies]);
         $this->assertSame(200, $res['code']);
         $data = json_decode($res['body'], true);
         $this->assertArrayHasKey('api_key', $data);
+    }
+
+    public function testCustomerApiKeysPostWithoutCsrfReturns403(): void
+    {
+        $cookies = self::loginAs('admin', 'admin');
+        $this->assertNotEmpty($cookies);
+        $res = self::runRequest(['method' => 'POST', 'uri' => 'api/keys.php', 'get' => [], 'post' => ['name' => 'e2e key'], 'headers' => [], 'cookies' => $cookies]);
+        $this->assertSame(403, $res['code']);
+        $data = json_decode($res['body'], true);
+        $this->assertSame('CSRF token required', $data['error'] ?? '');
     }
 
     public function testCustomerApiTransactionsGetReturns200(): void
     {
         $cookies = self::loginAs('admin', 'admin');
         $this->assertNotEmpty($cookies);
-        $keyRes = self::runRequest(['method' => 'POST', 'uri' => 'api/keys.php', 'get' => [], 'post' => ['name' => 'e2e tx key'], 'headers' => [], 'cookies' => $cookies]);
+        // Get CSRF token
+        $pageRes = self::runRequest(['method' => 'GET', 'uri' => 'register.php', 'get' => [], 'post' => [], 'headers' => [], 'cookies' => $cookies]);
+        $csrf = self::extractCsrfFromBody($pageRes['body'] ?? '');
+        $this->assertNotSame('', $csrf, 'Should extract CSRF token');
+        $keyRes = self::runRequest(['method' => 'POST', 'uri' => 'api/keys.php', 'get' => [], 'post' => ['name' => 'e2e tx key', 'csrf_token' => $csrf], 'headers' => [], 'cookies' => $cookies]);
         $this->assertSame(200, $keyRes['code']);
         $keyData = json_decode($keyRes['body'], true);
         $apiKey = $keyData['api_key'] ?? '';
@@ -693,12 +715,16 @@ final class FullStackE2ETest extends E2ETestCase
     {
         $cookies = self::loginAs('admin', 'admin');
         $this->assertNotEmpty($cookies);
+        // Get CSRF token
+        $pageRes = self::runRequest(['method' => 'GET', 'uri' => 'register.php', 'get' => [], 'post' => [], 'headers' => [], 'cookies' => $cookies]);
+        $csrf = self::extractCsrfFromBody($pageRes['body'] ?? '');
+        $this->assertNotSame('', $csrf, 'Should extract CSRF token');
         $storeName = 'e2ev' . substr(bin2hex(random_bytes(4)), 0, 6);
         $createRes = self::runRequest([
             'method' => 'POST',
             'uri' => 'api/stores.php',
             'get' => [],
-            'post' => ['storename' => $storeName, 'description' => 'Vendor E2E', 'vendorship_agree' => '1'],
+            'post' => ['storename' => $storeName, 'description' => 'Vendor E2E', 'vendorship_agree' => '1', 'csrf_token' => $csrf],
             'headers' => [],
             'cookies' => $cookies,
         ]);
@@ -711,7 +737,7 @@ final class FullStackE2ETest extends E2ETestCase
             'method' => 'POST',
             'uri' => 'api/items.php',
             'get' => [],
-            'post' => ['name' => 'E2E Item', 'description' => 'Test item', 'store_uuid' => $storeUuid],
+            'post' => ['name' => 'E2E Item', 'description' => 'Test item', 'store_uuid' => $storeUuid, 'csrf_token' => $csrf],
             'headers' => [],
             'cookies' => $cookies,
         ]);

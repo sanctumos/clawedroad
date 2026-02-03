@@ -28,6 +28,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = requireSession($session);
+    if (!$session->validateCsrfToken((string) ($_POST['csrf_token'] ?? ''))) {
+        http_response_code(403);
+        echo json_encode(['error' => 'CSRF token required']);
+        exit;
+    }
     $name = trim((string) ($_POST['name'] ?? ''));
     $description = trim((string) ($_POST['description'] ?? ''));
     $storeUuid = trim((string) ($_POST['store_uuid'] ?? ''));

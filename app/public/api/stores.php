@@ -19,6 +19,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = requireSession($session);
+    if (!$session->validateCsrfToken((string) ($_POST['csrf_token'] ?? ''))) {
+        http_response_code(403);
+        echo json_encode(['error' => 'CSRF token required']);
+        exit;
+    }
     $storename = trim((string) ($_POST['storename'] ?? ''));
     $description = trim((string) ($_POST['description'] ?? ''));
     $agree = isset($_POST['vendorship_agree']) && $_POST['vendorship_agree'] === '1';

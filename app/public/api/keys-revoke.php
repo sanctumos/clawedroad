@@ -17,6 +17,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $user = requireSession($session);
+if (!$session->validateCsrfToken((string) ($_POST['csrf_token'] ?? ''))) {
+    http_response_code(403);
+    echo json_encode(['error' => 'CSRF token required']);
+    exit;
+}
 $id = (int) ($_POST['id'] ?? 0);
 if ($id <= 0) {
     http_response_code(400);

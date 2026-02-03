@@ -123,6 +123,44 @@ curl -H "X-Agent-Identity: YOUR_IDENTITY_TOKEN" \
 
 ---
 
+## Security
+
+### CSRF Protection
+
+Session-authenticated API endpoints that modify data require CSRF tokens to protect against Cross-Site Request Forgery attacks.
+
+**Affected Endpoints**:
+- `POST /api/stores.php` — Create store
+- `POST /api/items.php` — Create item
+- `POST /api/transactions.php` — Create transaction
+- `POST /api/keys.php` — Create API key
+- `POST /api/keys-revoke.php` — Revoke API key
+
+**Why**: If a user has an active session and visits a malicious website, that site could otherwise submit POST requests using the user's session cookie.
+
+**Obtaining a CSRF Token**:
+
+For browser-based applications using session auth, obtain the CSRF token from any web form (they include a hidden `csrf_token` input), or call a page that initializes the session and read the token from `$_SESSION['csrf_token']`.
+
+**Submitting the CSRF Token**:
+```bash
+curl -X POST http://localhost/api/stores.php \
+  -b cookies.txt \
+  -d "storename=MyStore&csrf_token=YOUR_CSRF_TOKEN"
+```
+
+**Recommendation**: For programmatic/automated access, use **API key authentication** instead of session authentication. API keys are passed explicitly in headers and are not vulnerable to CSRF attacks.
+
+### Authentication Security Model
+
+| Auth Method | CSRF Required | Use Case |
+|-------------|---------------|----------|
+| Session (Cookie) | **Yes** | Browser-based web UI |
+| API Key (Header) | No | Programmatic/automated access |
+| Agent Identity (Header) | No | Agent-first integrations |
+
+---
+
 ## Rate Limiting
 
 ### Limits
@@ -348,12 +386,13 @@ curl http://localhost/logout.php \
 
 #### POST /api/stores.php
 
-Create a new store (requires session).
+Create a new store (requires session + CSRF token).
 
 **Parameters**:
 - `storename` (string, required, max 16 chars)
 - `description` (string, optional)
 - `vendorship_agree` (string, "1" to agree to terms)
+- `csrf_token` (string, required, session CSRF token)
 
 **Response**:
 ```json
@@ -367,19 +406,20 @@ Create a new store (requires session).
 ```bash
 curl -X POST http://localhost/api/stores.php \
   -b cookies.txt \
-  -d "storename=MyStore&description=My awesome store&vendorship_agree=1"
+  -d "storename=MyStore&description=My awesome store&vendorship_agree=1&csrf_token=YOUR_CSRF_TOKEN"
 ```
 
 ### Item Management
 
 #### POST /api/items.php
 
-Create a new item (requires session).
+Create a new item (requires session + CSRF token).
 
 **Parameters**:
 - `name` (string, required)
 - `description` (string, optional)
 - `store_uuid` (string, required)
+- `csrf_token` (string, required, session CSRF token)
 
 **Response**:
 ```json
@@ -393,7 +433,7 @@ Create a new item (requires session).
 ```bash
 curl -X POST http://localhost/api/items.php \
   -b cookies.txt \
-  -d "name=Laptop&description=High-end laptop&store_uuid=store123abc"
+  -d "name=Laptop&description=High-end laptop&store_uuid=store123abc&csrf_token=YOUR_CSRF_TOKEN"
 ```
 
 ### Transaction Management
@@ -441,7 +481,7 @@ curl -H "Authorization: Bearer YOUR_API_KEY" \
 
 #### POST /api/transactions.php
 
-Create a new transaction (requires session).
+Create a new transaction (requires session + CSRF token).
 
 **Parameters**:
 - `package_uuid` (string, required)
@@ -449,6 +489,7 @@ Create a new transaction (requires session).
 - `required_amount` (float, required, amount in crypto)
 - `chain_id` (int, optional, default 1 for Ethereum mainnet)
 - `currency` (string, optional, default "ETH")
+- `csrf_token` (string, required, session CSRF token)
 
 **Response**:
 ```json
@@ -465,7 +506,7 @@ Create a new transaction (requires session).
 ```bash
 curl -X POST http://localhost/api/transactions.php \
   -b cookies.txt \
-  -d "package_uuid=pkg123&required_amount=0.1&chain_id=1&currency=ETH&refund_address=0xYourAddress"
+  -d "package_uuid=pkg123&required_amount=0.1&chain_id=1&currency=ETH&refund_address=0xYourAddress&csrf_token=YOUR_CSRF_TOKEN"
 ```
 
 **Chain IDs**:
@@ -503,10 +544,11 @@ curl http://localhost/api/keys.php \
 
 #### POST /api/keys.php
 
-Create a new API key (requires session).
+Create a new API key (requires session + CSRF token).
 
 **Parameters**:
 - `name` (string, optional, key label)
+- `csrf_token` (string, required, session CSRF token)
 
 **Response**:
 ```json
@@ -523,15 +565,16 @@ Create a new API key (requires session).
 ```bash
 curl -X POST http://localhost/api/keys.php \
   -b cookies.txt \
-  -d "name=Production API"
+  -d "name=Production API&csrf_token=YOUR_CSRF_TOKEN"
 ```
 
 #### POST /api/keys-revoke.php
 
-Revoke an API key (requires session).
+Revoke an API key (requires session + CSRF token).
 
 **Parameters**:
 - `id` (int, required, key ID from GET /api/keys.php)
+- `csrf_token` (string, required, session CSRF token)
 
 **Response**:
 ```json
@@ -544,7 +587,7 @@ Revoke an API key (requires session).
 ```bash
 curl -X POST http://localhost/api/keys-revoke.php \
   -b cookies.txt \
-  -d "id=1"
+  -d "id=1&csrf_token=YOUR_CSRF_TOKEN"
 ```
 
 #### GET /api/auth-user.php
@@ -1060,5 +1103,5 @@ except requests.RequestException as e:
 
 ---
 
-**Document Version**: 1.0  
-**Last Updated**: January 31, 2026
+**Document Version**: 1.1  
+**Last Updated**: February 3, 2026

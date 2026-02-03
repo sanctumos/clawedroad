@@ -20,6 +20,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = requireSession($session);
+    if (!$session->validateCsrfToken((string) ($_POST['csrf_token'] ?? ''))) {
+        http_response_code(403);
+        echo json_encode(['error' => 'CSRF token required']);
+        exit;
+    }
     $name = trim((string) ($_POST['name'] ?? ''));
     $data = $apiKeyRepo->create($user['uuid'], $name);
     echo json_encode(['id' => $data['id'], 'name' => $data['name'], 'key_prefix' => $data['key_prefix'], 'api_key' => $data['api_key'], 'created_at' => $data['created_at']]);
