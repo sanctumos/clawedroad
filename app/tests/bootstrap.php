@@ -56,15 +56,15 @@ register_shutdown_function(static function () use ($envPath, $envBackup): void {
 
 $inc = $appDir . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR;
 
-// Load app bootstrap first (loads Env, Db, Session, User, ApiKey and inits with app/ baseDir)
+// Load app bootstrap first (loads Env, Db, Session, User, ApiKey, Config and inits with app/ baseDir)
 require $inc . 'bootstrap.php';
 // Load remaining classes not loaded by bootstrap
-require $inc . 'Config.php';
-require $inc . 'Schema.php';
-require $inc . 'Views.php';
-require $inc . 'StatusMachine.php';
-require $inc . 'api_helpers.php';
-require $inc . 'SkillGenerator.php';
+require_once $inc . 'Config.php';
+require_once $inc . 'Schema.php';
+require_once $inc . 'Views.php';
+require_once $inc . 'StatusMachine.php';
+require_once $inc . 'api_helpers.php';
+require_once $inc . 'SkillGenerator.php';
 
 // Run schema and views on test DB (bootstrap already inited with app/ and our test .env)
 $pdo = Db::pdo();

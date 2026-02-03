@@ -8,6 +8,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.5.8-dev] - 2026-02-03
+
+### Changed
+
+- **bootstrap.php** — Added Config.php to bootstrap includes and instantiate `$config` global. Changed all requires to `require_once` for idempotency. Admin and API scripts now have `$config` available automatically. Fixes issue #15.
+
+- **tests/bootstrap.php** — Updated to use `require_once` for classes already loaded by bootstrap.php.
+
+---
+
 ## [2.5.7-dev] - 2026-02-03
 
 ### Changed
