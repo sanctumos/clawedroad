@@ -300,8 +300,17 @@ pm.min_spare_servers = 5
 pm.max_spare_servers = 35
 pm.max_requests = 500
 
-php_admin_value[error_log] = /var/log/php-fpm/marketplace-error.log
+; PRODUCTION SECURITY: Disable error display to prevent information leakage
+php_admin_flag[display_errors] = off
+php_admin_flag[display_startup_errors] = off
+php_admin_value[error_reporting] = E_ALL & ~E_DEPRECATED & ~E_STRICT
+
+; Log errors for debugging (but never display to users)
 php_admin_flag[log_errors] = on
+php_admin_value[error_log] = /var/log/php-fpm/marketplace-error.log
+
+; Additional security: Expose minimal PHP version info
+php_admin_flag[expose_php] = off
 ```
 
 **Create Log Directory**:
@@ -602,6 +611,42 @@ disable_functions = exec,passthru,shell_exec,system,proc_open,popen,curl_exec,cu
 ```bash
 sudo systemctl restart php8.1-fpm
 ```
+
+### 5. Verify Error Display is Disabled
+
+**IMPORTANT**: Ensure `display_errors` is disabled in production to prevent information leakage.
+
+The PHP-FPM pool configuration (in step 1 under Web Server Configuration) already sets:
+```ini
+php_admin_flag[display_errors] = off
+php_admin_flag[display_startup_errors] = off
+```
+
+**Verify Settings**:
+```bash
+# Create a test script
+cat > /tmp/phpinfo.php << 'EOF'
+<?php phpinfo();
+EOF
+
+# Check via CLI (note: FPM settings differ from CLI)
+php -r "echo 'display_errors: ' . ini_get('display_errors') . PHP_EOL;"
+
+# Check via FPM (temporary test file)
+sudo -u marketplace cat > /home/marketplace/marketplace/app/public/_test_phpinfo.php << 'EOF'
+<?php phpinfo();
+EOF
+
+# Access via browser or curl, check "display_errors" shows "Off"
+curl -s https://marketplace.example.com/_test_phpinfo.php | grep -i "display_errors"
+
+# IMPORTANT: Remove test file immediately
+sudo rm /home/marketplace/marketplace/app/public/_test_phpinfo.php
+```
+
+**Expected Output**: `display_errors` should show `Off` in the PHP-FPM configuration.
+
+**Note**: The `php_admin_flag` directive prevents runtime override, ensuring these settings cannot be changed by application code.
 
 ### 5. Secure MariaDB
 
@@ -1053,5 +1098,5 @@ sudo chown www-data:www-data /var/cache/nginx
 
 ---
 
-**Document Version**: 1.0  
-**Last Updated**: January 31, 2026
+**Document Version**: 1.1  
+**Last Updated**: February 3, 2026

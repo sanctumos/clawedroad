@@ -1362,7 +1362,7 @@ ls -la /run/php/php-fpm.sock
 
 ### Debug Mode
 
-To enable verbose error reporting (development only):
+To enable verbose error reporting (**development only**):
 
 **PHP** (add to `public/includes/bootstrap.php`):
 ```php
@@ -1375,6 +1375,8 @@ ini_set('display_errors', '1');
 import logging
 logging.basicConfig(level=logging.DEBUG)
 ```
+
+> **⚠️ PRODUCTION WARNING**: Never enable `display_errors` in production! This exposes stack traces, file paths, and database details to attackers. The production PHP-FPM configuration in [DEPLOYMENT.md](DEPLOYMENT.md) uses `php_admin_flag[display_errors] = off` which cannot be overridden at runtime.
 
 ### Database Inspection
 
