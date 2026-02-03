@@ -42,7 +42,8 @@ final class ApiHelpersTest extends TestCase
     {
         $_SERVER['HTTP_AUTHORIZATION'] = 'Bearer ' . $this->apiKey;
         $user = requireApiKeyAndRateLimit($this->apiKeyRepo);
-        $this->assertSame($this->userUuid, $user['user_uuid']);
+        // Normalized to 'uuid' to match Session::getUser() shape
+        $this->assertSame($this->userUuid, $user['uuid']);
     }
 
     public function testRequireAgentOrApiKeyReturnsUserWhenAgentTokenValid(): void

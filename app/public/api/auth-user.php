@@ -17,5 +17,5 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 }
 
 $user = requireAgentOrApiKey($agentIdentity, $apiKeyRepo, $pdo, $hooks);
-$userUuid = $user['user_uuid'] ?? ($user['uuid'] ?? null);
-echo json_encode(['username' => $user['username'], 'role' => $user['role'], 'user_uuid' => $userUuid]);
+// All auth functions now return 'uuid' consistently
+echo json_encode(['username' => $user['username'], 'role' => $user['role'], 'user_uuid' => $user['uuid']]);

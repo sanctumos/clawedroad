@@ -55,8 +55,9 @@ final class ApiKey
         }
         $now = date('Y-m-d H:i:s');
         $this->pdo->prepare('UPDATE api_keys SET last_used_at = ? WHERE id = ?')->execute([$now, $row['id']]);
+        // Normalize to 'uuid' to match Session::getUser() shape
         return [
-            'user_uuid' => $row['user_uuid'],
+            'uuid' => $row['user_uuid'],
             'username' => $row['username'],
             'role' => $row['role'],
             'api_key_id' => $row['id'],

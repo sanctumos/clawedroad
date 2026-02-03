@@ -46,7 +46,8 @@ final class ApiKeyTest extends TestCase
         $created = $this->apiKeyRepo->create($this->userUuid, 'Test');
         $user = $this->apiKeyRepo->validate($created['api_key']);
         $this->assertNotNull($user);
-        $this->assertSame($this->userUuid, $user['user_uuid']);
+        // Normalized to 'uuid' to match Session::getUser() shape
+        $this->assertSame($this->userUuid, $user['uuid']);
         $this->assertArrayHasKey('username', $user);
         $this->assertArrayHasKey('role', $user);
         $this->assertSame($created['id'], $user['api_key_id']);
