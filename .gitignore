@@ -13,4 +13,7 @@ app/db/test.sqlite
 app/build/
 app/.phpunit.cache/
 app/vendor/
+app/pcov_ext/
+app/php_pcov*.zip
+app/phpunit_deprecations*.txt
 playwright-screenshots/node_modules/

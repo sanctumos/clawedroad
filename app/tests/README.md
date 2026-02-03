@@ -40,14 +40,29 @@ For code coverage you need **PCOV** or **Xdebug**:
 
 ```bash
 # With PCOV (recommended)
-composer require --dev pcov/clobber
 php -d pcov.enabled=1 ./vendor/bin/phpunit --coverage-text
 
 # Or with Xdebug
 php -d xdebug.mode=coverage ./vendor/bin/phpunit --coverage-text
 ```
 
+**Windows (PCOV not in PHP):** If you dropped PCOV into `app/pcov_ext/` (e.g. from [PECL pcov Windows](https://pecl.php.net/package/pcov)), run:
+
+```bash
+php -d extension=pcov_ext/php_pcov.dll -d pcov.enabled=1 -d pcov.directory=. vendor/bin/phpunit --coverage-text
+```
+
 HTML report is written to `build/coverage/`.
+
+### Current coverage (Unit + Integration + E2E)
+
+| Metric  | Value   |
+|---------|---------|
+| Lines   | ~66%    |
+| Methods | ~58%    |
+| Classes | 2/13 fully covered (ApiKey, StatusMachine) |
+
+Coverage is scoped to `public/includes` (shared library code). Entrypoint scripts (`public/*.php`, `public/api/*.php`) are not included in the report.
 
 ## Structure
 
