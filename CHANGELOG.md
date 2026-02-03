@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.5.9-dev] - 2026-02-03
+
+### Documentation
+
+- **DEVELOPER_GUIDE.md** — Added "Bootstrap Globals and Architecture" section documenting the "one script per endpoint" pattern and all globals available from `bootstrap.php` and `web_bootstrap.php`. Fixes issue #16.
+
+---
+
 ## [2.5.8-dev] - 2026-02-03
 
 ### Changed
