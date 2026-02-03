@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.5.11-dev] - 2026-02-03
+
+### Changed
+
+- **Hooks.php** — Added comment documenting that the `fetchAll === false` check is defensive for non-exception mode compatibility. Fixes issue #18.
+
+---
+
 ## [2.5.10-dev] - 2026-02-03
 
 ### Changed
