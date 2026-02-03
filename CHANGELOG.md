@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.5.14-dev] - 2026-02-03
+
+### Documentation
+
+- **API_GUIDE.md** — Updated POST /register.php documentation to include CSRF token requirement and optional invite code. Added two-step flow example. Fixes issue #29.
+
+---
+
 ## [2.5.13-dev] - 2026-02-03
 
 ### Documentation
