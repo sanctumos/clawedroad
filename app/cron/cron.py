@@ -12,7 +12,7 @@ BASE_DIR = str(Path(__file__).resolve().parent.parent)
 
 def main():
     sys.path.insert(0, str(Path(__file__).resolve().parent))
-    from env import load_dotenv, get_required, get
+    from cron_env import load_dotenv, get_required, get
     from db import get_connection
     from escrow import derive_escrow_address, derive_deposit_address
     from tasks import (

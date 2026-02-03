@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.5.4-dev] - 2026-02-03
+
+### Fixed
+
+- **cron/env.py → cron/cron_env.py** — Renamed to avoid import shadowing with third-party modules like `python-dotenv`. Updated imports in `cron.py` and `db.py`. Fixes issue #4.
+
+---
+
 ## [2.5.3-dev] - 2026-02-03
 
 ### Fixed
