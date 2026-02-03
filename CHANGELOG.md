@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.5.2-dev] - 2026-02-03
+
+### Fixed
+
+- **api/stores.php, api/transactions.php, book.php** — Use `User::generateUuid()` instead of `$userRepo->generateUuid()` (static method called as instance method, causes deprecation/fatal on PHP 8+). Fixes issue #2.
+
+---
+
 ## [2.5.1-dev] - 2026-01-31
 
 ### Added

@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $requiredAmount = (float) ($_POST['required_amount'] ?? 0);
     $chainId = (int) ($_POST['chain_id'] ?? 1);
     $currency = trim((string) ($_POST['currency'] ?? 'ETH'));
-    $txUuid = $userRepo->generateUuid();
+    $txUuid = User::generateUuid();
     $now = date('Y-m-d H:i:s');
     $pdo->prepare('INSERT INTO transactions (uuid, type, description, package_uuid, store_uuid, buyer_uuid, refund_address, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')->execute([$txUuid, 'evm', '', $packageUuid, $package['store_uuid'], $currentUser['uuid'], $refundAddress ?: null, $now]);
     $pdo->prepare('INSERT INTO evm_transactions (uuid, amount, chain_id, currency, created_at) VALUES (?, ?, ?, ?, ?)')->execute([$txUuid, $requiredAmount, $chainId, $currency, $now]);

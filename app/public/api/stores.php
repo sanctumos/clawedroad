@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo json_encode(['error' => 'Invalid storename']);
         exit;
     }
-    $uuid = $userRepo->generateUuid();
+    $uuid = User::generateUuid();
     $now = date('Y-m-d H:i:s');
     $pdo->prepare('INSERT INTO stores (uuid, storename, description, vendorship_agreed_at, is_free, created_at) VALUES (?, ?, ?, ?, 1, ?)')->execute([$uuid, $storename, $description, $agree ? $now : null, $now]);
     $pdo->prepare('INSERT INTO store_users (store_uuid, user_uuid, role) VALUES (?, ?, ?)')->execute([$uuid, $user['uuid'], 'owner']);
