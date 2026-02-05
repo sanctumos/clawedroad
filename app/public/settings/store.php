@@ -15,7 +15,7 @@ if (!$currentUser) {
 
 $stmt = $pdo->prepare('SELECT store_uuid FROM store_users WHERE user_uuid = ? AND role = ? LIMIT 1');
 $stmt->execute([$currentUser['uuid'], 'owner']);
-$row = $stmt->fetch(PDO::FETCH_ASSOC);
+$row = $stmt->fetch(\PDO::FETCH_ASSOC);
 if (!$row) {
     require_once __DIR__ . '/../includes/web_header.php';
     echo '<h1>Store settings</h1><p>You do not own a store. <a href="/create-store.php">Create a store</a> first.</p>';
@@ -26,7 +26,7 @@ if (!$row) {
 $storeUuid = $row['store_uuid'];
 $stmt = $pdo->prepare('SELECT uuid, storename, description, vendorship_agreed_at, withdraw_address FROM stores WHERE uuid = ? AND deleted_at IS NULL');
 $stmt->execute([$storeUuid]);
-$store = $stmt->fetch(PDO::FETCH_ASSOC);
+$store = $stmt->fetch(\PDO::FETCH_ASSOC);
 if (!$store) {
     require_once __DIR__ . '/../includes/web_header.php';
     echo '<h1>Store not found</h1>';

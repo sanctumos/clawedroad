@@ -9,13 +9,14 @@ declare(strict_types=1);
 $baseDir = dirname(__DIR__, 2);
 $inc = __DIR__ . DIRECTORY_SEPARATOR;
 
-require $inc . 'Env.php';
-require $inc . 'Db.php';
-require $inc . 'Session.php';
-require $inc . 'User.php';
-require $inc . 'ApiKey.php';
-require $inc . 'AgentIdentity.php';
-require $inc . 'Hooks.php';
+require_once $inc . 'Env.php';
+require_once $inc . 'Db.php';
+require_once $inc . 'Session.php';
+require_once $inc . 'User.php';
+require_once $inc . 'ApiKey.php';
+require_once $inc . 'AgentIdentity.php';
+require_once $inc . 'Hooks.php';
+require_once $inc . 'Config.php';
 
 Env::load($baseDir);
 Db::init($baseDir);
@@ -26,6 +27,7 @@ $userRepo = new User($pdo);
 $apiKeyRepo = new ApiKey($pdo);
 $agentIdentity = new AgentIdentity($pdo, $userRepo);
 $hooks = new Hooks($pdo);
+$config = new Config($pdo);
 
 function getApiKeyFromRequest(): ?string
 {

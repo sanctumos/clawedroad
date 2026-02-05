@@ -798,6 +798,88 @@ curl -I http://localhost:8000/api/stores.php
 
 ---
 
+## Bootstrap Globals and Architecture
+
+### One Script Per Endpoint Pattern
+
+Clawed Road follows a **"one PHP script per endpoint"** architecture. There is no front controller or routing framework. Each URL maps directly to a PHP file:
+
+- `/api/stores.php` → `public/api/stores.php`
+- `/api/transactions.php` → `public/api/transactions.php`
+- `/admin/config.php` → `public/admin/config.php`
+- `/register.php` → `public/register.php`
+
+**Benefits**:
+- Simple, predictable URL-to-file mapping
+- Each script is self-contained
+- Easy to understand and debug
+- No framework dependencies
+
+**Trade-offs**:
+- Global variables are used to share common objects
+- Less abstraction than MVC frameworks
+- Each script includes bootstrap manually
+
+### Bootstrap Globals
+
+When a script includes `bootstrap.php` (API/admin) or `web_bootstrap.php` (web pages), these global variables become available:
+
+#### From `bootstrap.php` (API and Admin Scripts)
+
+| Variable | Type | Description |
+|----------|------|-------------|
+| `$pdo` | `PDO` | Database connection |
+| `$session` | `Session` | PHP session wrapper |
+| `$userRepo` | `User` | User repository class |
+| `$apiKeyRepo` | `ApiKey` | API key repository class |
+| `$agentIdentity` | `AgentIdentity` | Agent identity verification |
+| `$hooks` | `Hooks` | Webhook event handler |
+| `$config` | `Config` | Configuration key-value store |
+
+#### From `web_bootstrap.php` (Web Pages)
+
+| Variable | Type | Description |
+|----------|------|-------------|
+| `$pdo` | `PDO` | Database connection |
+| `$session` | `Session` | PHP session wrapper |
+| `$userRepo` | `User` | User repository class |
+| `$currentUser` | `?array` | Logged-in user data (from session) |
+
+### Usage Example
+
+```php
+<?php
+
+declare(strict_types=1);
+
+/**
+ * GET /api/my-endpoint.php — Description
+ */
+require_once __DIR__ . '/../includes/bootstrap.php';
+require_once __DIR__ . '/../includes/api_helpers.php';
+
+header('Content-Type: application/json');
+
+// All these globals are now available:
+// $pdo, $session, $userRepo, $apiKeyRepo, $agentIdentity, $hooks, $config
+
+$user = requireSession($session);  // $session is available
+$value = $config->get('my_key');   // $config is available
+
+$stmt = $pdo->prepare('SELECT * FROM my_table WHERE user_uuid = ?');  // $pdo is available
+$stmt->execute([$user['uuid']]);
+
+echo json_encode(['data' => $stmt->fetchAll(\PDO::FETCH_ASSOC)]);
+```
+
+### Why Globals?
+
+The global pattern is chosen for simplicity in a framework-less architecture. While globals have drawbacks (testing, clarity), they're consistent and well-documented. Each script knows exactly what's available after including bootstrap.
+
+**Testing note**: Unit tests use mocks or the same bootstrap. Integration/E2E tests run full scripts via subprocess.
+
+---
+
 ## Common Patterns
 
 ### Append-Only Status Pattern

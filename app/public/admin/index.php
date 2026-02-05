@@ -29,7 +29,7 @@ foreach ($configKeys as $k) {
     $configValues[$k] = $config->get($k);
 }
 $tokensStmt = $pdo->query('SELECT id, chain_id, symbol, contract_address, created_at FROM accepted_tokens ORDER BY chain_id, symbol');
-$tokens = $tokensStmt->fetchAll(PDO::FETCH_ASSOC);
+$tokens = $tokensStmt->fetchAll(\PDO::FETCH_ASSOC);
 
 require_once __DIR__ . '/../includes/web_header.php';
 ?>

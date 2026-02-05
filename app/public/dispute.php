@@ -23,7 +23,7 @@ if ($disputeUuid === '') {
 
 $stmt = $pdo->prepare('SELECT d.*, d.transaction_uuid AS tx_uuid FROM disputes d WHERE d.uuid = ? AND d.deleted_at IS NULL');
 $stmt->execute([$disputeUuid]);
-$dispute = $stmt->fetch(PDO::FETCH_ASSOC);
+$dispute = $stmt->fetch(\PDO::FETCH_ASSOC);
 if (!$dispute) {
     http_response_code(404);
     $pageTitle = 'Not found';
@@ -37,7 +37,7 @@ $txUuid = $dispute['tx_uuid'] ?? $dispute['transaction_uuid'] ?? null;
 if (!$txUuid) {
     $stmt = $pdo->prepare('SELECT uuid FROM transactions WHERE dispute_uuid = ?');
     $stmt->execute([$disputeUuid]);
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $row = $stmt->fetch(\PDO::FETCH_ASSOC);
     $txUuid = $row['uuid'] ?? null;
 }
 
@@ -46,7 +46,7 @@ $isVendor = false;
 if ($txUuid) {
     $stmt = $pdo->prepare('SELECT buyer_uuid, store_uuid FROM transactions WHERE uuid = ?');
     $stmt->execute([$txUuid]);
-    $tx = $stmt->fetch(PDO::FETCH_ASSOC);
+    $tx = $stmt->fetch(\PDO::FETCH_ASSOC);
     if ($tx) {
         $isBuyer = ($tx['buyer_uuid'] ?? '') === $currentUser['uuid'];
         if (!$isBuyer) {
@@ -112,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $stmt = $pdo->prepare('SELECT c.id, c.claim, c.status, c.created_at, c.user_uuid, u.username FROM dispute_claims c LEFT JOIN users u ON u.uuid = c.user_uuid AND u.deleted_at IS NULL WHERE c.dispute_uuid = ? ORDER BY c.created_at ASC');
 $stmt->execute([$disputeUuid]);
-$claims = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$claims = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
 $csrf = $session->getCsrfToken();
 $pageTitle = 'Dispute ' . substr($disputeUuid, 0, 8) . '…';

@@ -339,18 +339,31 @@ curl "http://localhost/api/items.php?store_uuid=abc123def456"
 
 #### POST /register.php
 
-Register a new user account.
+Register a new user account. **Requires CSRF token** from GET request.
 
 **Parameters**:
 - `username` (string, required, max 16 chars)
 - `password` (string, required, min 8 chars)
+- `csrf_token` (string, required) — Obtain from GET /register.php response form
+- `invite` (string, optional) — Invite code for gated registration
 
-**Response**: `Registered as {username}` (plain text)
+**Response**: Redirects to `/marketplace.php` on success (HTTP 302)
 
-**Example**:
+**Example** (two-step flow):
 ```bash
-curl -X POST http://localhost/register.php \
-  -d "username=alice&password=secret123"
+# Step 1: GET the form and save cookies
+curl -c cookies.txt http://localhost/register.php -o register.html
+
+# Step 2: Extract CSRF token (example using grep)
+CSRF=$(grep -oP 'name="csrf_token"\s+value="\K[^"]+' register.html)
+
+# Step 3: POST registration with CSRF token
+curl -b cookies.txt -X POST http://localhost/register.php \
+  -d "username=alice&password=secret123&csrf_token=$CSRF"
+
+# With invite code:
+curl -b cookies.txt -X POST http://localhost/register.php \
+  -d "username=alice&password=secret123&csrf_token=$CSRF&invite=INVITE_CODE"
 ```
 
 #### POST /login.php
@@ -440,7 +453,7 @@ curl -X POST http://localhost/api/items.php \
 
 #### GET /api/transactions.php
 
-List transactions (requires API key or session).
+List transactions for the authenticated user (requires API key or session). Returns transactions where the user is the **buyer** OR transactions for **stores the user belongs to**. Returns up to 100 transactions, ordered by most recent first.
 
 **Query Parameters**: None
 
@@ -672,7 +685,9 @@ All admin endpoints require admin role.
 
 #### GET /admin/config.php
 
-Get system configuration (requires admin session).
+Get system configuration (requires admin session). Returns only the fixed set of editable configuration keys listed below.
+
+**Note**: Other config keys exist in the database (e.g., `gold_account_referral_percent`, `silver_account_referral_percent`, `bronze_account_referral_percent`, `free_account_referral_percent`, `android_developer_username`, `android_developer_commission`) but are not exposed by this endpoint.
 
 **Response**:
 ```json

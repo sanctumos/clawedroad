@@ -15,7 +15,7 @@ if (!$currentUser) {
 
 $stmt = $pdo->prepare('SELECT * FROM v_current_cumulative_transaction_statuses WHERE buyer_uuid = ? ORDER BY updated_at DESC LIMIT 50');
 $stmt->execute([$currentUser['uuid']]);
-$transactions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$transactions = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
 require_once __DIR__ . '/includes/web_header.php';
 ?>

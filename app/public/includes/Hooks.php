@@ -16,6 +16,7 @@ final class Hooks
         $stmt = $this->pdo->prepare('SELECT id, webhook_url FROM hooks WHERE event_name = ? AND enabled = 1');
         $stmt->execute([$eventName]);
         $hooks = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        // Defensive: fetchAll returns false on error without exception mode; with ERRMODE_EXCEPTION this is never hit
         if ($hooks === false) {
             $hooks = [];
         }

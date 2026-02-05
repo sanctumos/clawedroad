@@ -9,7 +9,7 @@ require_once __DIR__ . '/includes/web_bootstrap.php';
 
 $pageTitle = 'Marketplace';
 $stmt = $pdo->query("SELECT i.uuid, i.name, i.description, i.store_uuid, i.created_at, s.storename FROM items i JOIN stores s ON s.uuid = i.store_uuid AND s.deleted_at IS NULL WHERE i.deleted_at IS NULL ORDER BY i.created_at DESC LIMIT 100");
-$items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$items = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
 require_once __DIR__ . '/includes/web_header.php';
 ?>

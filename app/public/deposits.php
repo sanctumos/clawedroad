@@ -15,12 +15,12 @@ if (!$currentUser) {
 
 $stmt = $pdo->prepare('SELECT d.*, s.storename FROM deposits d JOIN store_users su ON d.store_uuid = su.store_uuid JOIN stores s ON s.uuid = d.store_uuid WHERE su.user_uuid = ? AND d.deleted_at IS NULL AND s.deleted_at IS NULL ORDER BY d.created_at DESC');
 $stmt->execute([$currentUser['uuid']]);
-$deposits = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$deposits = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
 // Check if user is owner of any store (for withdraw links)
 $stmt = $pdo->prepare('SELECT store_uuid FROM store_users WHERE user_uuid = ? AND role = ?');
 $stmt->execute([$currentUser['uuid'], 'owner']);
-$ownedStoreUuids = array_column($stmt->fetchAll(PDO::FETCH_ASSOC), 'store_uuid');
+$ownedStoreUuids = array_column($stmt->fetchAll(\PDO::FETCH_ASSOC), 'store_uuid');
 
 require_once __DIR__ . '/includes/web_header.php';
 ?>

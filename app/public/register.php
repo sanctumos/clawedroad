@@ -12,7 +12,7 @@ $inviteRow = null;
 if ($inviteCode !== '') {
     $stmt = $pdo->prepare('SELECT id, code, used_at FROM invite_codes WHERE code = ?');
     $stmt->execute([$inviteCode]);
-    $inviteRow = $stmt->fetch(PDO::FETCH_ASSOC);
+    $inviteRow = $stmt->fetch(\PDO::FETCH_ASSOC);
     if ($inviteRow && $inviteRow['used_at'] !== null) {
         $inviteRow = null;
     }
@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($postInvite !== '') {
         $stmt = $pdo->prepare('SELECT id, created_by_user_uuid, used_at FROM invite_codes WHERE code = ?');
         $stmt->execute([$postInvite]);
-        $inv = $stmt->fetch(PDO::FETCH_ASSOC);
+        $inv = $stmt->fetch(\PDO::FETCH_ASSOC);
         if (!$inv || $inv['used_at'] !== null) {
             $pageTitle = 'Register';
             $error = 'Invalid or already used invite code';

@@ -1,4 +1,5 @@
 <form method="post" action="/create-store.php">
+    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($session->getCsrfToken()) ?>">
     <div class="form-group">
         <label for="storename">Store name (1–16 chars)</label>
         <input id="storename" type="text" name="storename" maxlength="16" required>

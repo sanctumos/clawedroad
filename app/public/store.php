@@ -16,7 +16,7 @@ if ($uuid === '') {
 
 $stmt = $pdo->prepare('SELECT uuid, storename, description, created_at FROM stores WHERE uuid = ? AND deleted_at IS NULL');
 $stmt->execute([$uuid]);
-$store = $stmt->fetch(PDO::FETCH_ASSOC);
+$store = $stmt->fetch(\PDO::FETCH_ASSOC);
 if (!$store) {
     http_response_code(404);
     $pageTitle = 'Not found';
@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $tab === 'warnings') {
         $warningId = (int) ($_POST['warning_id'] ?? 0);
         $stmt = $pdo->prepare('SELECT id, store_uuid, status FROM store_warnings WHERE id = ? AND store_uuid = ?');
         $stmt->execute([$warningId, $uuid]);
-        $warn = $stmt->fetch(PDO::FETCH_ASSOC);
+        $warn = $stmt->fetch(\PDO::FETCH_ASSOC);
         if (!$warn) {
             $error = 'Warning not found.';
         } elseif ($action === 'resolve' && $isStaff) {
@@ -92,7 +92,7 @@ require_once __DIR__ . '/includes/web_header.php';
 <?php
 $stmt = $pdo->prepare('SELECT uuid, name, description, created_at FROM items WHERE store_uuid = ? AND deleted_at IS NULL ORDER BY created_at DESC');
 $stmt->execute([$uuid]);
-$items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$items = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 ?>
 <ul class="list">
     <?php foreach ($items as $row): ?>
@@ -113,7 +113,7 @@ $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <?php
 $stmt = $pdo->prepare('SELECT r.id, r.transaction_uuid, r.score, r.comment, r.created_at, u.username AS rater_username FROM reviews r JOIN users u ON u.uuid = r.rater_user_uuid AND u.deleted_at IS NULL WHERE r.store_uuid = ? ORDER BY r.created_at DESC');
 $stmt->execute([$uuid]);
-$reviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$reviews = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 ?>
 <?php if (empty($reviews)): ?>
     <p>No reviews yet.</p>
@@ -136,7 +136,7 @@ $reviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <?php
 $stmt = $pdo->prepare('SELECT w.id, w.message, w.status, w.created_at, w.resolved_at, w.acked_at, u.username AS author_username FROM store_warnings w JOIN users u ON u.uuid = w.author_user_uuid AND u.deleted_at IS NULL WHERE w.store_uuid = ? ORDER BY w.created_at DESC');
 $stmt->execute([$uuid]);
-$warnings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$warnings = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 $csrf = $session->getCsrfToken();
 ?>
 <?php if (empty($warnings)): ?>

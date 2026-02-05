@@ -8,6 +8,114 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.5.15-dev] - 2026-02-03
+
+### Documentation
+
+- **API_GUIDE.md** — Documented that GET /admin/config.php returns only a fixed set of keys, with note about other config keys in database. Fixes issue #30.
+
+---
+
+## [2.5.14-dev] - 2026-02-03
+
+### Documentation
+
+- **API_GUIDE.md** — Updated POST /register.php documentation to include CSRF token requirement and optional invite code. Added two-step flow example. Fixes issue #29.
+
+---
+
+## [2.5.13-dev] - 2026-02-03
+
+### Documentation
+
+- **API_GUIDE.md** — Updated GET /api/transactions.php documentation to reflect scoped results. Endpoint now returns user's own transactions (as buyer or vendor). Fixes issue #31.
+
+---
+
+## [2.5.12-dev] - 2026-02-03
+
+### Changed
+
+- **Views.php** — Simplified `dropViews()` by removing redundant if/else branches. Both SQLite and MariaDB support `DROP VIEW IF EXISTS`. Fixes issue #25.
+
+---
+
+## [2.5.11-dev] - 2026-02-03
+
+### Changed
+
+- **Hooks.php** — Added comment documenting that the `fetchAll === false` check is defensive for non-exception mode compatibility. Fixes issue #18.
+
+---
+
+## [2.5.10-dev] - 2026-02-03
+
+### Changed
+
+- **Standardize PDO::FETCH_ASSOC** — Converted all 56 occurrences of `PDO::FETCH_ASSOC` to `\PDO::FETCH_ASSOC` for consistency across `app/public/` and `app/tests/`. Fixes issue #17.
+
+---
+
+## [2.5.9-dev] - 2026-02-03
+
+### Documentation
+
+- **DEVELOPER_GUIDE.md** — Added "Bootstrap Globals and Architecture" section documenting the "one script per endpoint" pattern and all globals available from `bootstrap.php` and `web_bootstrap.php`. Fixes issue #16.
+
+---
+
+## [2.5.8-dev] - 2026-02-03
+
+### Changed
+
+- **bootstrap.php** — Added Config.php to bootstrap includes and instantiate `$config` global. Changed all requires to `require_once` for idempotency. Admin and API scripts now have `$config` available automatically. Fixes issue #15.
+
+- **tests/bootstrap.php** — Updated to use `require_once` for classes already loaded by bootstrap.php.
+
+---
+
+## [2.5.7-dev] - 2026-02-03
+
+### Changed
+
+- **Schema.php: stores table** — Added CHECK constraint to enforce 16-character limit on `storename` column at the database level. Added documentation comment. Fixes issue #14.
+
+---
+
+## [2.5.6-dev] - 2026-02-03
+
+### Security
+
+- **api/transactions.php** — GET endpoint now scopes transactions to current user. Returns only transactions where user is the buyer OR where the store belongs to the user (via `store_users`). Previously exposed all transactions to any authenticated user. Fixes issue #13.
+
+---
+
+## [2.5.5-dev] - 2026-02-03
+
+### Security
+
+- **create-store.php** — Added CSRF protection to prevent cross-site request forgery attacks. Added hidden `csrf_token` input to form and validation in POST handler. Updated E2E test to include CSRF token. Fixes issue #5.
+
+---
+
+## [2.5.4-dev] - 2026-02-03
+
+### Fixed
+
+- **cron/env.py → cron/cron_env.py** — Renamed to avoid import shadowing with third-party modules like `python-dotenv`. Updated imports in `cron.py` and `db.py`. Fixes issue #4.
+
+---
+
+## [2.5.3-dev] - 2026-02-03
+
+### Fixed
+
+- **Config.php: seedDefaults()** — Fixed SQLite-only `INSERT OR IGNORE` syntax causing failures on MariaDB/MySQL. Now branches on PDO driver first, using `INSERT OR IGNORE` for SQLite and `INSERT IGNORE` for MariaDB/MySQL. Added unit tests for MariaDB path with 100% coverage on Config class. Fixes issue #3.
+
+- **Test flakiness** — Fixed E2E test session isolation issue by using consistent session save path across test bootstrap and run_request.php subprocess.
+
+---
+
 ## [2.5.2-dev] - 2026-02-03
 
 ### Fixed

@@ -72,7 +72,7 @@ if ($peerParam !== '' && isset($peerUser)) {
         LIMIT 50 OFFSET ?
     SQL);
     $stmt->execute([$me, $peerUuid, $peerUuid, $me, $offset]);
-    $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $messages = $stmt->fetchAll(\PDO::FETCH_ASSOC);
     $stmt = $pdo->prepare('SELECT COUNT(*) FROM private_messages WHERE (from_user_uuid = ? AND to_user_uuid = ?) OR (from_user_uuid = ? AND to_user_uuid = ?)');
     $stmt->execute([$me, $peerUuid, $peerUuid, $me]);
     $totalMessages = (int) $stmt->fetchColumn();
@@ -118,11 +118,11 @@ $stmt = $pdo->prepare(<<<'SQL'
     ) ORDER BY last_at DESC LIMIT 50 OFFSET ?
 SQL);
 $stmt->execute([$me, $me, $me, $offset]);
-$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 $stmt = $pdo->prepare('SELECT from_user_uuid, COUNT(*) AS unread FROM private_messages WHERE to_user_uuid = ? AND read_at IS NULL GROUP BY from_user_uuid');
 $stmt->execute([$me]);
 $unreadByPeer = [];
-while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
     $unreadByPeer[$row['from_user_uuid']] = (int) $row['unread'];
 }
 $countStmt = $pdo->prepare(<<<'SQL'

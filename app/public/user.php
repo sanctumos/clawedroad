@@ -27,7 +27,7 @@ if ($user === null) {
 $storeUuid = null;
 $stmt = $pdo->prepare('SELECT store_uuid FROM store_users WHERE user_uuid = ? LIMIT 1');
 $stmt->execute([$user['uuid']]);
-$row = $stmt->fetch(PDO::FETCH_ASSOC);
+$row = $stmt->fetch(\PDO::FETCH_ASSOC);
 if ($row) {
     $storeUuid = $row['store_uuid'];
 }

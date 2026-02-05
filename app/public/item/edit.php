@@ -21,7 +21,7 @@ if ($itemUuid === '') {
 
 $stmt = $pdo->prepare('SELECT i.uuid, i.name, i.description, i.store_uuid, s.storename FROM items i JOIN stores s ON s.uuid = i.store_uuid AND s.deleted_at IS NULL WHERE i.uuid = ? AND i.deleted_at IS NULL');
 $stmt->execute([$itemUuid]);
-$item = $stmt->fetch(PDO::FETCH_ASSOC);
+$item = $stmt->fetch(\PDO::FETCH_ASSOC);
 
 if (!$item) {
     http_response_code(404);

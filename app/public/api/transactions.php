@@ -13,7 +13,24 @@ header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $user = requireAgentOrApiKey($agentIdentity, $apiKeyRepo, $pdo, $hooks);
-    $stmt = $pdo->query('SELECT * FROM v_current_cumulative_transaction_statuses LIMIT 100');
+    $userUuid = $user['uuid'];
+
+    // Get stores the user belongs to
+    $storeStmt = $pdo->prepare('SELECT store_uuid FROM store_users WHERE user_uuid = ?');
+    $storeStmt->execute([$userUuid]);
+    $userStoreUuids = array_column($storeStmt->fetchAll(\PDO::FETCH_ASSOC), 'store_uuid');
+
+    // Query transactions where user is buyer OR store is user's store
+    $params = [$userUuid];
+    $storeFilter = '';
+    if (!empty($userStoreUuids)) {
+        $placeholders = implode(',', array_fill(0, count($userStoreUuids), '?'));
+        $storeFilter = " OR store_uuid IN ($placeholders)";
+        $params = array_merge($params, $userStoreUuids);
+    }
+
+    $stmt = $pdo->prepare("SELECT * FROM v_current_cumulative_transaction_statuses WHERE buyer_uuid = ?$storeFilter ORDER BY updated_at DESC LIMIT 100");
+    $stmt->execute($params);
     echo json_encode(['transactions' => $stmt->fetchAll(\PDO::FETCH_ASSOC)]);
     exit;
 }

@@ -7,7 +7,7 @@ from pathlib import Path
 
 def get_connection(base_dir: str):
     """Return a DB connection (sqlite3 or pymysql)."""
-    from env import get, get_required, load_dotenv
+    from cron_env import get, get_required, load_dotenv
     load_dotenv(base_dir)
     driver = get("DB_DRIVER", "sqlite").lower()
     dsn = get_required("DB_DSN")

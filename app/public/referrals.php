@@ -18,16 +18,16 @@ $baseUrl = $siteUrl !== '' ? rtrim($siteUrl, '/') : '';
 
 $stmt = $pdo->prepare('SELECT code FROM invite_codes WHERE created_by_user_uuid = ? AND used_at IS NULL LIMIT 1');
 $stmt->execute([$currentUser['uuid']]);
-$row = $stmt->fetch(PDO::FETCH_ASSOC);
+$row = $stmt->fetch(\PDO::FETCH_ASSOC);
 $referralLink = $row ? $baseUrl . '/register.php?invite=' . urlencode($row['code']) : $baseUrl . '/register.php?invite=' . urlencode($currentUser['username']);
 
 $stmt = $pdo->prepare('SELECT uuid, username, created_at FROM users WHERE inviter_uuid = ? AND deleted_at IS NULL ORDER BY created_at DESC');
 $stmt->execute([$currentUser['uuid']]);
-$referredUsers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$referredUsers = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
 $stmt = $pdo->prepare('SELECT * FROM referral_payments WHERE user_uuid = ? ORDER BY created_at DESC LIMIT 50');
 $stmt->execute([$currentUser['uuid']]);
-$earnings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$earnings = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
 require_once __DIR__ . '/includes/web_header.php';
 ?>

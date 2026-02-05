@@ -15,7 +15,7 @@ if ($uuid === '') {
 
 $stmt = $pdo->prepare('SELECT i.uuid, i.name, i.description, i.store_uuid, i.created_at, s.storename FROM items i JOIN stores s ON s.uuid = i.store_uuid AND s.deleted_at IS NULL WHERE i.uuid = ? AND i.deleted_at IS NULL');
 $stmt->execute([$uuid]);
-$item = $stmt->fetch(PDO::FETCH_ASSOC);
+$item = $stmt->fetch(\PDO::FETCH_ASSOC);
 if (!$item) {
     http_response_code(404);
     $pageTitle = 'Not found';
@@ -28,7 +28,7 @@ if (!$item) {
 $pageTitle = $item['name'];
 $stmt = $pdo->prepare('SELECT uuid, name, description, type, created_at FROM packages WHERE item_uuid = ? AND deleted_at IS NULL ORDER BY created_at');
 $stmt->execute([$uuid]);
-$packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$packages = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
 require_once __DIR__ . '/includes/web_header.php';
 ?>

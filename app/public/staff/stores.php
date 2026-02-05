@@ -22,7 +22,7 @@ if (!in_array($currentUser['role'] ?? '', ['staff', 'admin'], true)) {
 }
 
 $stmt = $pdo->query('SELECT uuid, storename, description, is_suspended, created_at FROM stores WHERE deleted_at IS NULL ORDER BY storename');
-$stores = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$stores = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 require_once __DIR__ . '/../includes/web_header.php';
 ?>
 <h1>Stores</h1>

@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$categories = $pdo->query('SELECT id, name_en, parent_id FROM item_categories ORDER BY name_en')->fetchAll(PDO::FETCH_ASSOC);
+$categories = $pdo->query('SELECT id, name_en, parent_id FROM item_categories ORDER BY name_en')->fetchAll(\PDO::FETCH_ASSOC);
 $csrf = $session->getCsrfToken();
 require_once __DIR__ . '/../includes/web_header.php';
 ?>

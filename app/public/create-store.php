@@ -14,6 +14,15 @@ if (!$currentUser) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!$session->validateCsrfToken((string) ($_POST['csrf_token'] ?? ''))) {
+        $pageTitle = 'Create store';
+        $error = 'Invalid request. Please try again.';
+        require_once __DIR__ . '/includes/web_header.php';
+        echo '<p class="alert alert-warning">' . htmlspecialchars($error) . '</p>';
+        include __DIR__ . '/includes/form_create_store.php';
+        require_once __DIR__ . '/includes/web_footer.php';
+        return;
+    }
     $storename = trim((string) ($_POST['storename'] ?? ''));
     $description = trim((string) ($_POST['description'] ?? ''));
     $agree = isset($_POST['vendorship_agree']) && $_POST['vendorship_agree'] === '1';

@@ -49,8 +49,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $stmt = $pdo->query('SELECT w.id, w.store_uuid, w.message, w.status, w.created_at, s.storename, u.username AS author FROM store_warnings w LEFT JOIN stores s ON s.uuid = w.store_uuid LEFT JOIN users u ON u.uuid = w.author_user_uuid AND u.deleted_at IS NULL ORDER BY w.created_at DESC');
-$warnings = $stmt->fetchAll(PDO::FETCH_ASSOC);
-$stores = $pdo->query('SELECT uuid, storename FROM stores WHERE deleted_at IS NULL ORDER BY storename')->fetchAll(PDO::FETCH_ASSOC);
+$warnings = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+$stores = $pdo->query('SELECT uuid, storename FROM stores WHERE deleted_at IS NULL ORDER BY storename')->fetchAll(\PDO::FETCH_ASSOC);
 $csrf = $session->getCsrfToken();
 require_once __DIR__ . '/../includes/web_header.php';
 ?>

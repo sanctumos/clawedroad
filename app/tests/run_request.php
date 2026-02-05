@@ -12,6 +12,13 @@ if (php_sapi_name() !== 'cli' || $argc < 3) {
     exit(1);
 }
 
+// Use a test-specific session directory to avoid race conditions in parallel tests
+$testSessionPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'phpunit_e2e_sessions';
+if (!is_dir($testSessionPath)) {
+    @mkdir($testSessionPath, 0755, true);
+}
+ini_set('session.save_path', $testSessionPath);
+
 $responseFile = $argv[1];
 $requestFile = $argv[2];
 $requestJson = file_get_contents($requestFile);

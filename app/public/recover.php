@@ -35,7 +35,7 @@ if ($token === '') {
 if ($token !== '') {
     $stmt = $pdo->prepare('SELECT id, user_uuid, expires_at FROM password_reset_tokens WHERE token = ?');
     $stmt->execute([$token]);
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $row = $stmt->fetch(\PDO::FETCH_ASSOC);
 
     if (!$row || (strtotime($row['expires_at']) < time())) {
         $pageTitle = 'Invalid or expired link';

@@ -9,7 +9,7 @@ require_once __DIR__ . '/includes/web_bootstrap.php';
 
 $pageTitle = 'Vendors';
 $stmt = $pdo->query('SELECT uuid, storename, description, created_at FROM stores WHERE deleted_at IS NULL ORDER BY storename');
-$stores = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$stores = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
 require_once __DIR__ . '/includes/web_header.php';
 ?>

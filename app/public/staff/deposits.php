@@ -22,7 +22,7 @@ if (!in_array($currentUser['role'] ?? '', ['staff', 'admin'], true)) {
 }
 
 $stmt = $pdo->query('SELECT d.uuid, d.store_uuid, d.currency, d.crypto, d.address, d.crypto_value, d.created_at, s.storename FROM deposits d LEFT JOIN stores s ON s.uuid = d.store_uuid AND s.deleted_at IS NULL WHERE d.deleted_at IS NULL ORDER BY d.created_at DESC');
-$deposits = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$deposits = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
 require_once __DIR__ . '/../includes/web_header.php';
 ?>

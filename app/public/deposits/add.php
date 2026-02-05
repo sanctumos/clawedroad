@@ -15,10 +15,10 @@ if (!$currentUser) {
 
 $stmt = $pdo->prepare('SELECT s.uuid, s.storename FROM stores s JOIN store_users su ON s.uuid = su.store_uuid WHERE su.user_uuid = ? AND s.deleted_at IS NULL ORDER BY s.storename');
 $stmt->execute([$currentUser['uuid']]);
-$stores = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$stores = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
 $tokensStmt = $pdo->query('SELECT id, chain_id, symbol, contract_address FROM accepted_tokens ORDER BY chain_id, symbol');
-$tokens = $tokensStmt->fetchAll(PDO::FETCH_ASSOC);
+$tokens = $tokensStmt->fetchAll(\PDO::FETCH_ASSOC);
 
 $error = '';
 $success = '';

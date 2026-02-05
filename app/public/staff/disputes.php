@@ -22,7 +22,7 @@ if (!in_array($currentUser['role'] ?? '', ['staff', 'admin'], true)) {
 }
 
 $stmt = $pdo->query('SELECT d.uuid, d.status, d.created_at, d.transaction_uuid FROM disputes d WHERE d.deleted_at IS NULL ORDER BY d.created_at DESC');
-$disputes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$disputes = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
 require_once __DIR__ . '/../includes/web_header.php';
 ?>

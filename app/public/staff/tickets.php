@@ -22,7 +22,7 @@ if (!in_array($currentUser['role'] ?? '', ['staff', 'admin'], true)) {
 }
 
 $stmt = $pdo->query('SELECT t.id, t.subject, t.status, t.created_at, u.username FROM support_tickets t LEFT JOIN users u ON u.uuid = t.user_uuid AND u.deleted_at IS NULL ORDER BY t.created_at DESC');
-$tickets = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$tickets = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
 require_once __DIR__ . '/../includes/web_header.php';
 ?>

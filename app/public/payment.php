@@ -22,7 +22,7 @@ if (!$currentUser) {
 
 $stmt = $pdo->prepare('SELECT * FROM v_current_cumulative_transaction_statuses WHERE uuid = ?');
 $stmt->execute([$uuid]);
-$tx = $stmt->fetch(PDO::FETCH_ASSOC);
+$tx = $stmt->fetch(\PDO::FETCH_ASSOC);
 if (!$tx) {
     http_response_code(404);
     $pageTitle = 'Not found';
@@ -55,7 +55,7 @@ $disputeStatus = 'NONE';
 if (!empty($tx['dispute_uuid'])) {
     $stmt = $pdo->prepare('SELECT status FROM disputes WHERE uuid = ?');
     $stmt->execute([$tx['dispute_uuid']]);
-    $d = $stmt->fetch(PDO::FETCH_ASSOC);
+    $d = $stmt->fetch(\PDO::FETCH_ASSOC);
     $disputeStatus = ($d && (strtolower($d['status'] ?? '') === 'resolved')) ? 'RESOLVED' : 'OPEN';
 }
 

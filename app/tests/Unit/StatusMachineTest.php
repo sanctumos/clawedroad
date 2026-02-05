@@ -38,7 +38,7 @@ final class StatusMachineTest extends TestCase
         $this->sm->appendTransactionStatus($this->txUuid, 0.1, StatusMachine::STATUS_COMPLETED, 'Funded', $this->buyerUuid, null);
         $row = $this->pdo->prepare('SELECT * FROM transaction_statuses WHERE transaction_uuid = ? ORDER BY id DESC LIMIT 1');
         $row->execute([$this->txUuid]);
-        $r = $row->fetch(PDO::FETCH_ASSOC);
+        $r = $row->fetch(\PDO::FETCH_ASSOC);
         $this->assertSame(StatusMachine::STATUS_COMPLETED, $r['status']);
         $this->assertSame('0.1', (string) $r['amount']);
         $this->assertSame('Funded', $r['comment']);
@@ -49,7 +49,7 @@ final class StatusMachineTest extends TestCase
         $this->sm->appendShippingStatus($this->txUuid, 'DISPATCHED', 'Shipped', $this->buyerUuid);
         $row = $this->pdo->prepare('SELECT * FROM shipping_statuses WHERE transaction_uuid = ?');
         $row->execute([$this->txUuid]);
-        $r = $row->fetch(PDO::FETCH_ASSOC);
+        $r = $row->fetch(\PDO::FETCH_ASSOC);
         $this->assertSame('DISPATCHED', $r['status']);
         $this->assertSame('Shipped', $r['comment']);
     }
@@ -59,7 +59,7 @@ final class StatusMachineTest extends TestCase
         $this->sm->requestRelease($this->txUuid, $this->buyerUuid);
         $row = $this->pdo->prepare("SELECT * FROM transaction_intents WHERE transaction_uuid = ? AND action = 'RELEASE'");
         $row->execute([$this->txUuid]);
-        $r = $row->fetch(PDO::FETCH_ASSOC);
+        $r = $row->fetch(\PDO::FETCH_ASSOC);
         $this->assertNotNull($r);
         $this->assertSame('pending', $r['status']);
     }
@@ -77,7 +77,7 @@ final class StatusMachineTest extends TestCase
         $this->sm->requestPartialRefund($this->txUuid, 0.5, $this->buyerUuid);
         $row = $this->pdo->prepare("SELECT * FROM transaction_intents WHERE transaction_uuid = ? AND action = 'PARTIAL_REFUND'");
         $row->execute([$this->txUuid]);
-        $r = $row->fetch(PDO::FETCH_ASSOC);
+        $r = $row->fetch(\PDO::FETCH_ASSOC);
         $this->assertNotNull($r);
         $params = json_decode($r['params'], true);
         $this->assertSame(0.5, $params['refund_percent']);

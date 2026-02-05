@@ -20,7 +20,7 @@ if (!$currentUser) {
 
 $stmt = $pdo->prepare('SELECT p.uuid, p.name, p.item_uuid, p.store_uuid, i.name AS item_name FROM packages p JOIN items i ON i.uuid = p.item_uuid AND i.deleted_at IS NULL WHERE p.uuid = ? AND p.deleted_at IS NULL');
 $stmt->execute([$packageUuid]);
-$package = $stmt->fetch(PDO::FETCH_ASSOC);
+$package = $stmt->fetch(\PDO::FETCH_ASSOC);
 if (!$package) {
     http_response_code(404);
     $pageTitle = 'Not found';

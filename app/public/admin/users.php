@@ -96,7 +96,7 @@ if ($detailUser !== null) {
     // Detail view: show user and action forms
     $stmt = $pdo->prepare('SELECT su.store_uuid, s.storename FROM store_users su JOIN stores s ON s.uuid = su.store_uuid WHERE su.user_uuid = ? AND su.role = ?');
     $stmt->execute([$detailUser['uuid'], 'owner']);
-    $stores = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $stores = $stmt->fetchAll(\PDO::FETCH_ASSOC);
     $csrf = $session->getCsrfToken();
     require_once __DIR__ . '/../includes/web_header.php';
     ?>
@@ -148,7 +148,7 @@ $total = (int) $countStmt->fetchColumn();
 $totalPages = (int) ceil($total / $perPage);
 $stmt = $pdo->prepare('SELECT uuid, username, role, banned, created_at FROM users WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT ? OFFSET ?');
 $stmt->execute([$perPage, $offset]);
-$users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$users = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
 require_once __DIR__ . '/../includes/web_header.php';
 ?>

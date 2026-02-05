@@ -138,12 +138,16 @@ final class Schema
         }
     }
 
+    /**
+     * Creates stores table.
+     * Note: storename is limited to 16 characters (enforced by CHECK constraint and PHP code).
+     */
     private function createStores(): void
     {
         $this->exec(<<<'SQL'
         CREATE TABLE IF NOT EXISTS stores (
             uuid TEXT PRIMARY KEY,
-            storename TEXT NOT NULL UNIQUE,
+            storename TEXT NOT NULL UNIQUE CHECK (LENGTH(storename) >= 1 AND LENGTH(storename) <= 16),
             description TEXT,
             vendorship_agreed_at TEXT,
             is_gold INTEGER NOT NULL DEFAULT 0,

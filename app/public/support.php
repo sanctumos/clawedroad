@@ -24,7 +24,7 @@ $totalPages = (int) ceil($total / $perPage);
 
 $stmt = $pdo->prepare('SELECT id, subject, status, created_at, updated_at FROM support_tickets WHERE user_uuid = ? ORDER BY created_at DESC LIMIT ' . $perPage . ' OFFSET ' . $offset);
 $stmt->execute([$currentUser['uuid']]);
-$tickets = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$tickets = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
 require_once __DIR__ . '/includes/web_header.php';
 ?>

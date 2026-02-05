@@ -42,11 +42,8 @@ final class Views
             'v_transaction_statuses',
         ];
         foreach ($views as $v) {
-            if ($this->sqlite) {
-                $this->exec("DROP VIEW IF EXISTS {$v}");
-            } else {
-                $this->exec("DROP VIEW IF EXISTS {$v}");
-            }
+            // DROP VIEW IF EXISTS works on both SQLite and MariaDB
+            $this->exec("DROP VIEW IF EXISTS {$v}");
         }
     }
 

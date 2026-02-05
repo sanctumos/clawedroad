@@ -22,7 +22,7 @@ if ($ticketId <= 0) {
 
 $stmt = $pdo->prepare('SELECT id, user_uuid, subject, status, created_at, updated_at FROM support_tickets WHERE id = ?');
 $stmt->execute([$ticketId]);
-$ticket = $stmt->fetch(PDO::FETCH_ASSOC);
+$ticket = $stmt->fetch(\PDO::FETCH_ASSOC);
 if (!$ticket) {
     http_response_code(404);
     $pageTitle = 'Not found';
@@ -91,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $stmt = $pdo->prepare('SELECT m.id, m.body, m.created_at, m.user_uuid, u.username FROM support_ticket_messages m LEFT JOIN users u ON u.uuid = m.user_uuid AND u.deleted_at IS NULL WHERE m.ticket_id = ? ORDER BY m.created_at ASC');
 $stmt->execute([$ticketId]);
-$messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$messages = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
 $csrf = $session->getCsrfToken();
 $pageTitle = 'Ticket #' . $ticketId;

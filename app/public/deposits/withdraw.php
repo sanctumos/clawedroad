@@ -21,7 +21,7 @@ if ($depositUuid === '') {
 
 $stmt = $pdo->prepare('SELECT d.*, s.storename, s.withdraw_address FROM deposits d JOIN stores s ON s.uuid = d.store_uuid WHERE d.uuid = ? AND d.deleted_at IS NULL AND s.deleted_at IS NULL');
 $stmt->execute([$depositUuid]);
-$deposit = $stmt->fetch(PDO::FETCH_ASSOC);
+$deposit = $stmt->fetch(\PDO::FETCH_ASSOC);
 
 if (!$deposit) {
     http_response_code(404);
@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // Re-fetch withdraw_address in case we're showing form
 $stmt = $pdo->prepare('SELECT withdraw_address FROM stores WHERE uuid = ?');
 $stmt->execute([$deposit['store_uuid']]);
-$store = $stmt->fetch(PDO::FETCH_ASSOC);
+$store = $stmt->fetch(\PDO::FETCH_ASSOC);
 $withdrawAddress = $store['withdraw_address'] ?? null;
 
 $csrf = $session->getCsrfToken();

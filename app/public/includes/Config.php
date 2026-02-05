@@ -35,15 +35,14 @@ final class Config
             'android_developer_username' => '',
             'android_developer_commission' => '0',
         ];
-        $stmt = $this->pdo->prepare('INSERT OR IGNORE INTO config (key, value) VALUES (?, ?)');
+        $driver = $this->pdo->getAttribute(\PDO::ATTR_DRIVER_NAME);
+        if ($driver === 'sqlite') {
+            $stmt = $this->pdo->prepare('INSERT OR IGNORE INTO config (key, value) VALUES (?, ?)');
+        } else {
+            $stmt = $this->pdo->prepare('INSERT IGNORE INTO config (key, value) VALUES (?, ?)');
+        }
         foreach ($defaults as $key => $value) {
             $stmt->execute([$key, $value]);
-        }
-        if ($this->pdo->getAttribute(\PDO::ATTR_DRIVER_NAME) !== 'sqlite') {
-            $stmt = $this->pdo->prepare('INSERT IGNORE INTO config (key, value) VALUES (?, ?)');
-            foreach ($defaults as $key => $value) {
-                $stmt->execute([$key, $value]);
-            }
         }
     }
 

@@ -433,12 +433,20 @@ final class FullStackE2ETest extends E2ETestCase
     {
         $cookies = self::loginAs('admin', 'admin');
         $this->assertNotEmpty($cookies);
+        // Get CSRF token from create-store page
+        $getRes = self::runRequest(['method' => 'GET', 'uri' => 'create-store.php', 'get' => [], 'post' => [], 'headers' => [], 'cookies' => $cookies]);
+        $csrf = self::extractCsrfFromBody($getRes['body'] ?? '');
+        $this->assertNotSame('', $csrf, 'Should extract CSRF token');
+        $newCookies = self::parseCookiesFromResponse($getRes);
+        if ($newCookies !== []) {
+            $cookies = array_merge($cookies, $newCookies);
+        }
         $storeName = 'e2e_store_' . substr(bin2hex(random_bytes(4)), 0, 6);
         $res = self::runRequest([
             'method' => 'POST',
             'uri' => 'create-store.php',
             'get' => [],
-            'post' => ['storename' => $storeName, 'description' => 'E2E store', 'vendorship_agree' => '1'],
+            'post' => ['storename' => $storeName, 'description' => 'E2E store', 'vendorship_agree' => '1', 'csrf_token' => $csrf],
             'headers' => [],
             'cookies' => $cookies,
         ]);

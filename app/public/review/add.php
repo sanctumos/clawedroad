@@ -21,7 +21,7 @@ if ($transactionUuid === '') {
 
 $stmt = $pdo->prepare('SELECT t.uuid, t.store_uuid, t.buyer_uuid, v.current_status FROM transactions t JOIN v_current_cumulative_transaction_statuses v ON v.uuid = t.uuid WHERE t.uuid = ?');
 $stmt->execute([$transactionUuid]);
-$tx = $stmt->fetch(PDO::FETCH_ASSOC);
+$tx = $stmt->fetch(\PDO::FETCH_ASSOC);
 if (!$tx) {
     http_response_code(404);
     $pageTitle = 'Not found';

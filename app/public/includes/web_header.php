@@ -75,7 +75,7 @@ $currentUser = $currentUser ?? null;
         if (isset($pdo) && !empty($currentUser['uuid'])) {
             $stmt = $pdo->prepare('SELECT store_uuid FROM store_users WHERE user_uuid = ? LIMIT 1');
             $stmt->execute([$currentUser['uuid']]);
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
             if ($row) {
                 $isVendor = true;
                 $myStoreUuid = $row['store_uuid'];
