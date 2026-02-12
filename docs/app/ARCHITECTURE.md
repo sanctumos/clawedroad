@@ -106,9 +106,11 @@ The marketplace application follows a hybrid PHP/Python architecture with clear 
 
 5. Vendor ships product, marks as shipped (future feature)
 
-6. Buyer confirms receipt, triggers release intent
-   ├─ PHP inserts transaction_intent (RELEASE)
-   └─ Python cron reads intent, signs transaction, releases funds
+6. Buyer confirms receipt (annotation only), vendor/staff requests release
+   ├─ Buyer confirm: updates transactions.buyer_confirmed_at
+   ├─ Release request via web POST /payment.php (action=release)
+   ├─ Or API POST /api/transaction-actions.php (action=release)
+   └─ PHP inserts transaction_intent (RELEASE)
 
 7. Python cron inserts transaction_status (RELEASED)
 ```
@@ -186,11 +188,13 @@ Views (v_current_transaction_statuses) provide this automatically
 PHP never signs blockchain transactions. Instead, it writes "intent" records that Python executes.
 
 ```
-PHP Side (web request):
+PHP Side (web/API request):
 ┌─────────────────────────────────────────────────────────┐
 │ User clicks "Release Funds"                             │
 │   ↓                                                     │
-│ POST /api/transactions/{uuid}/release                   │
+│ POST /payment.php (action=release) OR                   │
+│ POST /api/transaction-actions.php                       │
+│   (transaction_uuid, action=release)                    │
 │   ↓                                                     │
 │ StatusMachine::requestRelease($txUuid, $userUuid)      │
 │   ↓                                                     │

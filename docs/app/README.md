@@ -204,7 +204,8 @@ app/
     │   ├── keys.php         # List/create API keys
     │   ├── keys-revoke.php  # Revoke API key
     │   ├── stores.php       # List/create stores
-    │   └── transactions.php # List/create transactions
+    │   ├── transactions.php # List/create transactions
+    │   └── transaction-actions.php # Request release/cancel/partial-refund intents
     │
     ├── admin/               # Admin-only endpoints
     │   ├── config.php       # Get/set configuration
@@ -565,6 +566,18 @@ Create transaction (requires session).
 ```
 
 **Note**: Escrow address will be filled by Python cron within minutes.
+
+#### POST /api/transaction-actions.php
+Request a transaction action intent (`release`, `cancel`, `partial_refund`).
+
+**Parameters**:
+- `transaction_uuid` (string, required)
+- `action` (string, required)
+- `refund_percent` (required for `partial_refund`)
+
+**Auth**:
+- API key / agent identity (no CSRF), or
+- Session + CSRF token
 
 #### GET /api/keys.php
 List API keys for current user (requires session).

@@ -133,6 +133,7 @@ Session-authenticated API endpoints that modify data require CSRF tokens to prot
 - `POST /api/stores.php` — Create store
 - `POST /api/items.php` — Create item
 - `POST /api/transactions.php` — Create transaction
+- `POST /api/transaction-actions.php` — Transaction actions (session-authenticated)
 - `POST /api/keys.php` — Create API key
 - `POST /api/keys-revoke.php` — Revoke API key
 
@@ -520,6 +521,50 @@ Create a new transaction (requires session + CSRF token).
 curl -X POST http://localhost/api/transactions.php \
   -b cookies.txt \
   -d "package_uuid=pkg123&required_amount=0.1&chain_id=1&currency=ETH&refund_address=0xYourAddress&csrf_token=YOUR_CSRF_TOKEN"
+```
+
+#### POST /api/transaction-actions.php
+
+Request a transaction action intent: `release`, `cancel`, or `partial_refund`.
+
+**Authentication**:
+- API key / agent identity: allowed (no CSRF)
+- Session cookie: allowed but requires `csrf_token`
+
+**Parameters**:
+- `transaction_uuid` (string, required)
+- `action` (string, required): `release` | `cancel` | `partial_refund`
+- `refund_percent` (number, required for `partial_refund`, 1..100)
+- `csrf_token` (string, required for session-authenticated requests)
+
+**Permissions / rules** (mirrors web flows):
+- Transaction access: buyer OR vendor (`store_users`) OR staff/admin.
+- `release`: vendor or staff/admin only; only when current payment status is `COMPLETED` and there is no open dispute.
+- `cancel`: buyer or staff/admin only; only when current payment status is `PENDING` and there is no open dispute.
+- `partial_refund`: staff/admin only; requires an open dispute on the transaction.
+
+**Response**:
+```json
+{
+  "ok": true,
+  "action": "release",
+  "transaction_uuid": "tx123abc",
+  "intent": "RELEASE"
+}
+```
+
+**Example (API key)**:
+```bash
+curl -X POST http://localhost/api/transaction-actions.php \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -d "transaction_uuid=tx123abc&action=release"
+```
+
+**Example (session + CSRF)**:
+```bash
+curl -X POST http://localhost/api/transaction-actions.php \
+  -b cookies.txt \
+  -d "transaction_uuid=tx123abc&action=cancel&csrf_token=YOUR_CSRF_TOKEN"
 ```
 
 **Chain IDs**:

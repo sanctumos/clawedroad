@@ -8,6 +8,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.5.17-dev] - 2026-02-12
+
+### Added
+
+- **api/transaction-actions.php (issue #26)** — New API endpoint to request transaction intents: `release`, `cancel`, `partial_refund`. Supports API key/agent identity auth (no CSRF) and session auth (CSRF required) and enforces action permissions to match the web flows.
+
+### Documentation
+
+- **ARCHITECTURE.md (issue #26)** — Corrected release flow docs to reflect the real trigger paths (web `payment.php` and the new API endpoint).
+- **API docs (issue #26)** — Documented `POST /api/transaction-actions.php` and added it to quick references.
+
+### Tests
+
+- **E2E (issue #26)** — Added coverage for transaction action auth/CSRF, permission denials, and successful intent writes.
+
 ## [2.5.16-dev] - 2026-02-07
 
 ### Added

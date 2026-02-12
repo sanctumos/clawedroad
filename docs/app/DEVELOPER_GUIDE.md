@@ -806,6 +806,7 @@ Clawed Road follows a **"one PHP script per endpoint"** architecture. There is n
 
 - `/api/stores.php` → `public/api/stores.php`
 - `/api/transactions.php` → `public/api/transactions.php`
+- `/api/transaction-actions.php` → `public/api/transaction-actions.php`
 - `/admin/config.php` → `public/admin/config.php`
 - `/register.php` → `public/register.php`
 

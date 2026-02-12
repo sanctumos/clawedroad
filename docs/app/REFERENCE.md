@@ -167,6 +167,7 @@ python app/cron/cron.py
 | `/api/stores.php` | List/create stores | No/Session |
 | `/api/items.php` | List/create items | No/Session |
 | `/api/transactions.php` | List/create transactions | API Key/Session |
+| `/api/transaction-actions.php` | Request release/cancel/partial-refund intents | API Key/Session |
 | `/api/keys.php` | Manage API keys | Session |
 | `/admin/config.php` | System configuration | Admin |
 | `/admin/tokens.php` | Accepted tokens | Admin |
