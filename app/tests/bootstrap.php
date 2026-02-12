@@ -105,7 +105,9 @@ if ($adminUsername !== null && $adminUsername !== '') {
         if ($storeUuid === false) {
             $storeUuid = User::generateUuid();
             $now = date('Y-m-d H:i:s');
-            $storename = 'e2e_store_' . substr(str_replace(['.', ' '], '', (string) microtime(true)), -8);
+            // storename has a DB CHECK constraint: 1..16 chars (see Schema.php).
+            // Keep this deterministic-length to avoid test bootstrap failures.
+            $storename = 'e2e' . substr(bin2hex(random_bytes(8)), 0, 13); // 3 + 13 = 16 chars
             $pdo->prepare('INSERT INTO stores (uuid, storename, description, created_at, updated_at) VALUES (?, ?, ?, ?, ?)')->execute([$storeUuid, $storename, 'E2E store', $now, $now]);
             $pdo->prepare('INSERT INTO store_users (store_uuid, user_uuid, role) VALUES (?, ?, ?)')->execute([$storeUuid, $cust['uuid'], 'owner']);
         }
