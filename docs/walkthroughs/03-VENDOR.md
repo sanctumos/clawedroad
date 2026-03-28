@@ -257,7 +257,7 @@ Main Vendor Flows:
    Deposits → Add deposit → Fund address → Confirm → Withdraw
 
 3. ORDER FULFILLMENT:
-   (Received in store) → Mark shipped → Customer confirms → Release funds
+   (Received in store) → Mark shipped → Customer confirms → Request release (UI). The Python cron processes `transaction_intents` on a schedule and broadcasts the payout; until the cron runs, status stays at **COMPLETED** (or **FROZEN** if a dispute is open). After successful processing it becomes **RELEASED**.
 
 4. STORE SETUP:
    Settings/Store → Set name/description → Set withdraw address → Save

@@ -14,7 +14,14 @@ final class RegisterE2ETest extends E2ETestCase
     /** POST without CSRF shows "Invalid request" or validation error. */
     public function testPostRegisterInvalidUsernameShowsFormWithError(): void
     {
-        $res = self::runRequest(['method' => 'POST', 'uri' => 'register.php', 'get' => [], 'post' => ['username' => '', 'password' => 'password123'], 'headers' => []]);
+        $res = self::runRequest([
+            'method' => 'POST',
+            'uri' => 'register.php',
+            'get' => [],
+            'post' => ['username' => '', 'password' => 'password123'],
+            'headers' => [],
+            'remote_addr' => '127.0.0.' . random_int(2, 250),
+        ]);
         $this->assertSame(200, $res['code']);
         $this->assertTrue(
             str_contains($res['body'], 'Invalid username') || str_contains($res['body'], 'Invalid request'),
@@ -25,7 +32,14 @@ final class RegisterE2ETest extends E2ETestCase
     /** POST without CSRF or with short password shows form with error. */
     public function testPostRegisterShortPasswordShowsFormWithError(): void
     {
-        $res = self::runRequest(['method' => 'POST', 'uri' => 'register.php', 'get' => [], 'post' => ['username' => 'newuser', 'password' => 'short'], 'headers' => []]);
+        $res = self::runRequest([
+            'method' => 'POST',
+            'uri' => 'register.php',
+            'get' => [],
+            'post' => ['username' => 'newuser', 'password' => 'short'],
+            'headers' => [],
+            'remote_addr' => '127.0.0.' . random_int(2, 250),
+        ]);
         $this->assertSame(200, $res['code']);
         $this->assertTrue(
             str_contains($res['body'], '8') || str_contains($res['body'], 'Invalid request'),

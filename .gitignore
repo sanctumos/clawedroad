@@ -17,3 +17,10 @@ app/pcov_ext/
 app/php_pcov*.zip
 app/phpunit_deprecations*.txt
 playwright-screenshots/node_modules/
+
+# Python venv (local cron tests)
+app/cron/.venv/
+app/cron/__pycache__/
+app/cron/.coverage
+app/cron/.pytest_cache/
+app/cron/tests/__pycache__/

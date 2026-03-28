@@ -129,8 +129,18 @@ curl -H "Authorization: Bearer YOUR_API_KEY" \
 ```
 
 #### Run Database Migration
+
+From the `app/` directory (working directory must be `app/` so `public/` resolves correctly):
+
 ```bash
+cd app
 php public/schema.php
+```
+
+From the repository root:
+
+```bash
+php app/public/schema.php
 ```
 
 #### Run Cron Manually

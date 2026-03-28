@@ -138,7 +138,7 @@ func SearchItems(text string) []string {
         // instead of NewMatchQuery
         //query := bleve.NewQueryStringQuery(text)
         // The syntax for customizing is explained here:
-        // http://blevesearch.com/docs/Query-String-Query
+        // https://blevesearch.com/docs/Query-String-Query
         // printDocsFromSearchResults(searchResults)
         if len(searchResults.Hits) < 1 {
                 query := bleve.NewQueryStringQuery(text+"~2")

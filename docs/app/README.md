@@ -88,7 +88,7 @@ This is a cryptocurrency-based marketplace application built on a LEMP (Linux, N
 
 4. **Intent-Based Blockchain Operations**
    - PHP writes "intent" records (RELEASE, CANCEL, PARTIAL_REFUND)
-   - Python cron reads intents and performs blockchain operations
+   - Python cron reads `transaction_intents` and broadcasts native ETH transfers from the HD escrow (requires `ALCHEMY_API_KEY`). Deposit **withdraw** intents are still a ledger stub until on-chain send is implemented.
    - PHP never signs transactions or holds private keys
 
 ---
@@ -346,9 +346,11 @@ Database views for current transaction states.
 #### `cron.py`
 Main cron entrypoint. Runs scheduled tasks:
 1. Fill escrow addresses for new transactions
-2. Poll PENDING transactions for completion
+2. Poll PENDING transactions for completion (`completion_tolerance` from `config` table)
 3. Fail old PENDING transactions
-4. (Future) Release COMPLETED, freeze stuck, handle deposits
+4. Fill deposit receive addresses and refresh deposit balances (when Alchemy is configured)
+5. Process deposit withdraw intents (ledger stub; not a full on-chain send yet)
+6. Process `transaction_intents` (RELEASE / CANCEL / PARTIAL_REFUND) with native ETH sends via Alchemy
 
 ```bash
 python cron/cron.py
@@ -359,6 +361,7 @@ Task implementations:
 - `run_fill_escrow()`: Derive and assign escrow addresses
 - `run_update_pending()`: Check balances and mark COMPLETED
 - `run_fail_old_pending()`: Timeout old PENDING transactions
+- `run_process_transaction_intents()`: Execute pending release/cancel/partial-refund intents on-chain (ETH only)
 
 #### `escrow.py`
 HD wallet derivation using BIP-32/44.

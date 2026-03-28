@@ -269,13 +269,23 @@ def api_request_with_backoff(url, max_retries=3):
 
 #### GET /
 
-Health check endpoint.
-
-**Response**: `OK` (plain text)
+Redirects to the marketplace entry (`/marketplace.php`, HTTP 302). Do not use this URL for load balancer or monitoring health checks.
 
 **Example**:
 ```bash
-curl http://localhost/
+curl -sI http://localhost/
+# HTTP/1.1 302 ...
+```
+
+#### GET /health.php
+
+Health check endpoint (plain text).
+
+**Response**: `OK` with HTTP 200 when the database is reachable; `DB_UNAVAILABLE` with HTTP 503 if the DB ping fails.
+
+**Example**:
+```bash
+curl -s http://localhost/health.php
 ```
 
 #### GET /api/stores.php

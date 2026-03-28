@@ -4,7 +4,15 @@ release old COMPLETED, freeze stuck, cancel not-dispatched, reconcile, deposit w
 Uses config for durations; Alchemy for balance/price.
 """
 from datetime import datetime, timedelta
+import json
 import re
+import traceback
+import uuid
+from typing import Optional
+
+from alchemy_client import eth_gas_price
+
+_ADDR_RE = re.compile(r"^0x[0-9a-fA-F]{40}$")
 
 def _parse_duration(s: str) -> timedelta:
     """Parse '24h', '336h', '720h' into timedelta."""
@@ -156,7 +164,6 @@ def run_process_withdraw_intents(conn):
             cur.execute("UPDATE deposit_withdraw_intents SET status = 'failed' WHERE id = ?", (intent_id,))
             continue
         # Stub: record withdrawal in history and mark intent completed. Real impl would send tx.
-        import uuid
         history_uuid = uuid.uuid4().hex
         cur.execute(
             """INSERT INTO deposit_history (uuid, deposit_uuid, action, value, created_at)
@@ -166,3 +173,197 @@ def run_process_withdraw_intents(conn):
         cur.execute("UPDATE deposits SET crypto_value = 0, updated_at = ? WHERE uuid = ?", (now, deposit_uuid))
         cur.execute("UPDATE deposit_withdraw_intents SET status = 'completed' WHERE id = ?", (intent_id,))
     conn.commit()
+
+
+def _valid_evm_address(addr: Optional[str]) -> bool:
+    return bool(addr and _ADDR_RE.match(addr.strip()))
+
+
+def _append_transaction_status(cur, tx_uuid: str, amount: float, status: str, comment: str) -> None:
+    now = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+    cur.execute(
+        """INSERT INTO transaction_statuses (transaction_uuid, time, amount, status, comment, created_at)
+           VALUES (?, ?, ?, ?, ?, ?)""",
+        (tx_uuid, now, amount, status, comment, now),
+    )
+
+
+def _fail_intent(cur, conn, intent_id: int, msg: str) -> None:
+    cur.execute("UPDATE transaction_intents SET status = 'failed' WHERE id = ?", (intent_id,))
+    conn.commit()
+
+
+def _complete_intent(cur, conn, intent_id: int) -> None:
+    cur.execute("UPDATE transaction_intents SET status = 'completed' WHERE id = ?", (intent_id,))
+    conn.commit()
+
+
+def run_process_transaction_intents(
+    conn,
+    mnemonic: str,
+    api_key: str,
+    network: str,
+    derive_escrow_account_fn,
+    get_balance_wei_fn,
+    eth_native_transfer_wei_fn,
+    eth_native_send_value_wei_fn,
+) -> None:
+    """
+    Process pending transaction_intents (RELEASE, CANCEL, PARTIAL_REFUND): sign native ETH
+    transfers from HD escrow and broadcast via Alchemy. Requires ALCHEMY_API_KEY; MVP is native ETH only.
+    """
+    if not api_key:
+        return
+
+    cur = conn.cursor()
+    cur.execute(
+        "SELECT id, transaction_uuid, action, params FROM transaction_intents WHERE status = 'pending' ORDER BY requested_at ASC"
+    )
+    rows = cur.fetchall()
+
+    for intent_id, tx_uuid, action, params_json in rows:
+        try:
+            cur.execute(
+                "SELECT current_status FROM v_current_cumulative_transaction_statuses WHERE uuid = ?",
+                (tx_uuid,),
+            )
+            st = cur.fetchone()
+            pay_status = (st[0] if st else None) or ""
+
+            cur.execute(
+                "SELECT escrow_address, chain_id, currency FROM evm_transactions WHERE uuid = ?",
+                (tx_uuid,),
+            )
+            evm = cur.fetchone()
+            if not evm or not evm[0]:
+                _fail_intent(cur, conn, intent_id)
+                continue
+            escrow_address, chain_id, currency = evm[0], int(evm[1]), (evm[2] or "ETH").upper()
+            if currency != "ETH":
+                _fail_intent(cur, conn, intent_id)
+                continue
+
+            cur.execute(
+                """
+                SELECT t.refund_address, s.withdraw_address, t.dispute_uuid
+                FROM transactions t
+                JOIN stores s ON s.uuid = t.store_uuid
+                WHERE t.uuid = ?
+                """,
+                (tx_uuid,),
+            )
+            row = cur.fetchone()
+            if not row:
+                _fail_intent(cur, conn, intent_id)
+                continue
+            refund_address, withdraw_address, dispute_uuid = row[0], row[1], row[2]
+
+            acct = derive_escrow_account_fn(mnemonic, tx_uuid)
+            if acct.address.lower() != (escrow_address or "").lower():
+                _fail_intent(cur, conn, intent_id)
+                continue
+
+            def balance_of(addr: str) -> int:
+                return get_balance_wei_fn(addr, api_key, network)
+
+            if action == "RELEASE":
+                if pay_status != "COMPLETED":
+                    _fail_intent(cur, conn, intent_id)
+                    continue
+                if not _valid_evm_address(withdraw_address):
+                    _fail_intent(cur, conn, intent_id)
+                    continue
+                tx_hash = eth_native_transfer_wei_fn(
+                    acct, withdraw_address.strip(), chain_id, api_key, network, balance_of
+                )
+                _append_transaction_status(
+                    cur, tx_uuid, 0.0, "RELEASED", f"Released to vendor (tx {tx_hash})"
+                )
+                _complete_intent(cur, conn, intent_id)
+
+            elif action == "CANCEL":
+                if pay_status != "PENDING":
+                    _fail_intent(cur, conn, intent_id)
+                    continue
+                if not _valid_evm_address(refund_address):
+                    _fail_intent(cur, conn, intent_id)
+                    continue
+                tx_hash = eth_native_transfer_wei_fn(
+                    acct, refund_address.strip(), chain_id, api_key, network, balance_of
+                )
+                _append_transaction_status(
+                    cur, tx_uuid, 0.0, "CANCELLED", f"Refunded buyer (tx {tx_hash})"
+                )
+                _complete_intent(cur, conn, intent_id)
+
+            elif action == "PARTIAL_REFUND":
+                # Dispute flow freezes the transaction (FROZEN) while dispute is open.
+                if pay_status != "FROZEN":
+                    _fail_intent(cur, conn, intent_id)
+                    continue
+                if not dispute_uuid:
+                    _fail_intent(cur, conn, intent_id)
+                    continue
+                cur.execute("SELECT status FROM disputes WHERE uuid = ?", (dispute_uuid,))
+                drow = cur.fetchone()
+                dstatus = (drow[0] or "").lower() if drow else ""
+                if dstatus != "open":
+                    _fail_intent(cur, conn, intent_id)
+                    continue
+                try:
+                    params = json.loads(params_json or "{}")
+                    pct = float(params.get("refund_percent", 0))
+                except (json.JSONDecodeError, TypeError, ValueError):
+                    _fail_intent(cur, conn, intent_id)
+                    continue
+                if pct <= 0 or pct > 100:
+                    _fail_intent(cur, conn, intent_id)
+                    continue
+                if not _valid_evm_address(refund_address) or not _valid_evm_address(withdraw_address):
+                    _fail_intent(cur, conn, intent_id)
+                    continue
+
+                gas_price = eth_gas_price(api_key, network)
+                fee = gas_price * 21_000
+                bal = balance_of(acct.address)
+                total_sendable = bal - 2 * fee
+                if total_sendable <= 0:
+                    _fail_intent(cur, conn, intent_id)
+                    continue
+                buyer_wei = int(total_sendable * pct / 100.0)
+                vendor_wei = total_sendable - buyer_wei
+                if buyer_wei <= 0 or vendor_wei <= 0:
+                    _fail_intent(cur, conn, intent_id)
+                    continue
+
+                h1 = eth_native_send_value_wei_fn(
+                    acct,
+                    refund_address.strip(),
+                    buyer_wei,
+                    chain_id,
+                    api_key,
+                    network,
+                    balance_of,
+                )
+                h2 = eth_native_send_value_wei_fn(
+                    acct,
+                    withdraw_address.strip(),
+                    vendor_wei,
+                    chain_id,
+                    api_key,
+                    network,
+                    balance_of,
+                )
+                _append_transaction_status(
+                    cur,
+                    tx_uuid,
+                    0.0,
+                    "RELEASED",
+                    f"Partial refund: buyer tx {h1}, vendor tx {h2}",
+                )
+                _complete_intent(cur, conn, intent_id)
+            else:
+                _fail_intent(cur, conn, intent_id)
+        except Exception:
+            traceback.print_exc()
+            _fail_intent(cur, conn, intent_id)

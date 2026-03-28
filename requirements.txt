@@ -1,0 +1,3 @@
+# Clawed Road — Python dependencies (canonical entry for the static audit).
+# Cron jobs: install with `pip install -r requirements.txt` from repo root.
+-r app/cron/requirements.txt

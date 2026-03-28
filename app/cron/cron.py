@@ -14,7 +14,7 @@ def main():
     sys.path.insert(0, str(Path(__file__).resolve().parent))
     from cron_env import load_dotenv, get_required, get
     from db import get_connection
-    from escrow import derive_escrow_address, derive_deposit_address
+    from escrow import derive_escrow_address, derive_deposit_address, derive_escrow_account
     from tasks import (
         run_fill_escrow,
         run_update_pending,
@@ -22,8 +22,14 @@ def main():
         run_fill_deposit_address,
         run_update_deposit_balances,
         run_process_withdraw_intents,
+        run_process_transaction_intents,
     )
-    from alchemy_client import get_balance_wei, wei_to_eth
+    from alchemy_client import (
+        get_balance_wei,
+        wei_to_eth,
+        eth_native_transfer_wei,
+        eth_native_send_value_wei,
+    )
 
     load_dotenv(BASE_DIR)
     mnemonic = get_required("MNEMONIC")
@@ -46,13 +52,32 @@ def main():
         return wei_to_eth(wei)
 
     run_fill_escrow(conn, mnemonic, derive_escrow_address)
+    tol_raw = config_get("completion_tolerance", "0.05")
+    try:
+        tolerance = float(tol_raw)
+    except (TypeError, ValueError):
+        tolerance = 0.05
     if api_key:
-        run_update_pending(conn, get_balance_eth, tolerance=0.05)
+        run_update_pending(conn, get_balance_eth, tolerance=tolerance)
         run_fail_old_pending(conn, config_get)
     run_fill_deposit_address(conn, mnemonic, derive_deposit_address)
     if api_key:
         run_update_deposit_balances(conn, get_balance_eth)
     run_process_withdraw_intents(conn)
+    if api_key:
+        def get_balance_wei_local(addr: str) -> int:
+            return get_balance_wei(addr, api_key, network)
+
+        run_process_transaction_intents(
+            conn,
+            mnemonic,
+            api_key,
+            network,
+            derive_escrow_account,
+            get_balance_wei_local,
+            eth_native_transfer_wei,
+            eth_native_send_value_wei,
+        )
     conn.close()
     print("Cron run done.")
 
